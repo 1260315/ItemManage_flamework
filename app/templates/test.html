@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <title>テスト用データ一覧ページ</title>
+    </head>
+    <body>
+        <header>
+            <h1>備品管理システムテストdemo</h1>
+        </header>
+        <table style="margin-left: auto; margin-right: auto;">
+            <tr>
+                <td><input type="text" name="item" placeholder="備品名"></td>
+                <td><input type="text" name="id" placeholder="管理番号"></td>
+            </tr>
+            <tr>
+                <td><input type="text" name="date" placeholder="登録日"></td>
+                <td><input type="text" name="user" placeholder="登録者"></td>
+            </tr>
+        </table>
+        <div style="text-align: center;">
+            <p>カテゴリ:<br>
+                <input name="check[]" value="1" type="checkbox">PC
+                <input name="check[]" value="2" type="checkbox">モニター
+                <input name="check[]" value="3" type="checkbox">マウス
+                <input name="check[]" value="4" type="checkbox">キーボード
+                <input name="check[]" value="5" type="checkbox">プリンター
+                <input name="check[]" value="6" type="checkbox">その他
+            </p>
+            <input type="submit" value="検索">
+        </div>
+    <br>
+    <table id="ages" border="1" style="margin-left: auto; margin-right: auto;">
+        <tr>
+            <th>備品ID <button type="submit" name="sort[]" value="1" >sort</button></th>
+            <th>備品名 <button type="submit" name="sort[]" value="1" >sort</button></th>
+            <th>登録日 <button type="submit" name="sort[]" value="1" >sort</button></th>
+            <th>登録者 <button type="submit" name="sort[]" value="1" >sort</button></th>
+            <th>カテゴリ <button type="submit" name="sort[]" value="1">sort</button></th>
+            <th>備考</th>
+            <th>編集</th>
+            <th>削除</th>
+        </tr>
+        {% for item in items %}
+        <tr>
+            <td>{{item.id}}</td>
+            <td>{{item.name}}</td>
+            <td>{{item.date}}</td>
+            <td>{{item.registrant_id}}</td>
+            <td>{{item.category_id}}</td>
+            <td>{{item.remark}}</td>
+            <td>
+                <form action="/edit/" method="GET">
+                    <button  type="submit" name="edit_id" value = "{{item.id}}">編集</button>
+                </form>
+            </td>
+            <td>
+                <form action="/delete/" method="GET">
+                    <button  type="submit" name="delete_it" value = "{{item.id}}">削除</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+        </table>
+
+        <form action="/register/" method="GET">
+            <button type="submit" name="register_newData">新データ登録</button>
+        </form>
+</body>
+
+</html>

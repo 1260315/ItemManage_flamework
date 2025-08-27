@@ -1,0 +1,7 @@
+/*本番用*/
+
+CREATE DATABASE IF NOT EXISTS auth_db;
+CREATE DATABASE IF NOT EXISTS equipment_db;
+CREATE DATABASE IF NOT EXISTS category_db;
+
+/*テスト用*/

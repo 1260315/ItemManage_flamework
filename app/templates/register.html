@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <title>テスト用データ登録ページ</title>
+    </head>
+    <body>
+        <header>
+            <h1>備品管理システムテストdemo</h1>
+        </header>
+        <h1>
+            新データ登録
+        </h1>
+        <form action="/register/" method="POST">
+            <table>
+                <tr>
+                    <th>ユーザー名</th>
+                    <td><input type="text" name="name"></td>
+                </tr>
+                <tr>
+                    <th>カテゴリーID</th>
+                    <td><input type="text" name="category_id"></td>
+                </tr>
+                <!-- その他データ項目の入力フォームを追加する -->
+                  <tr>
+                    <th>登録者ID（本番はログイン情報から）</th>
+                    <td><input type="text" name="registrant_id"></td>
+                </tr>
+                 <tr>
+                    <th>備考</th>
+                    <td><input type="text" name="remark"></td>
+                </tr>
+            </table>
+        </form>
+        
+    </body>
