@@ -1,5 +1,3 @@
-version: '3'  # Docker Composeのバージョン
-
 services:
   web:  # Flaskアプリケーション
     build: .  # Dockerfileからビルド

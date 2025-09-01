@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <title>備品情報削除確認</title>
+    </head>
+    <body text-align: center, margin: 0 auto;>
+        <header>
+            <h1>備品管理システム テスト</h1>
+        </header>
+
+        <h2>備品情報の削除確認</h2>
+        <h3>対象備品情報</h3>
+
+        備品名 : {{item.name}}<br>
+        カテゴリ : 
+            {% if item.categories %}
+                {{ item.categories | map(attribute='name') | join(', ')}}
+            {% else %}
+                未分類
+            {% endif %}<br>
+        登録者 : {{item.registrant_id}}<br>
+        登録日 : {{item.created_at}}<br>
+        備考 : {{item.remark}}<br>
+
+        <h3>この備品情報を削除します。よろしいですか？</h3>
+
+        <form method="POST" action="/delete_item">
+            <input type="hidden" name="id" value="{{ item.id }}">
+            <button type="submit" >いいよ</button>
+        </form>
+        <form method="GET" action="/">
+            <input type="hidden" name="id" value="{{ item.id }}">
+            <button type="submit" >だめー</button>
+        </form>
+    </body>
