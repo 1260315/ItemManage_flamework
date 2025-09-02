@@ -59,7 +59,7 @@ def add_item():
     # 選択されたカテゴリを追加
     for cid in category_ids:
         #query.get() : 主キーを指定して1件だけレコードを取得する
-        category = Categories.query.get(int(cid))   #idと一致するカテゴリーを返す
+        category = db.session.get(Categories, int(cid))   #idと一致するカテゴリーを返す
         if category:    # categoryがNULLじゃなければ
             new_item.categories.append(category)    #categoryをnew_itemのcategoriesに追加
 
@@ -68,13 +68,31 @@ def add_item():
 
     return redirect("/")
 
-# #===================================================================
-# #編集業務
-# @app.route('/edit_item/', methods = ['GET', 'POST'])
-# def edit_item():
-#     if request.method == 'GET':
+#===================================================================
+#編集業務
+@app.route('/edit_item/', methods = ['GET', 'POST'])
+def edit_item():
+    if request.method == 'GET':
+        edit_id = request.args.get("id")
+        if not edit_id:
+            return redirect("/")
+        else:
+            edit_item = Items.refer(edit_id)
+        
+        if not edit_item:
+            return redirect("/")
+        else:
+            categories = db.session.query(Categories).all()
+            return render_template("p006_1.html", item=edit_item, categories=categories)
 
-#     elif request.method == 'POST':
+    elif request.method == 'POST':
+        name = request.form["name"]
+        category_ids = request.form.getlist("category_ids")
+        remark = request.form["remark"]
+        
+        #以下、編集情報確認処理と、伝送処理を行う
+
+        return redirect("/")
 
 
 #===================================================================
@@ -87,19 +105,19 @@ def delete_item():
             return redirect("/")
         else:
             delete_item = Items.refer(delete_id)
-        if delete_item :    #備品があった
-            return render_template("p007_1.html", item = delete_item)
-        
-        else:               #備品がなかった 
+
+        if not delete_item :    #備品がなかった
             return redirect("/")
+        else:                   #備品があった
+            return render_template("p007_1.html", item = delete_item)
 
     elif request.method == 'POST':
 
         delete_item = Items.delete(request.form["id"])
-        if delete_item:     #削除が完了した
+        if not delete_item:     #削除ができなかった
+           return redirect("/")
+        else:                   #削除が完了した
             return render_template("p007_2.html", item = delete_item)
-        else:               #削除ができなかった
-            return redirect("/")
 
 
 ### ===== アプリ実行 ===== ###
@@ -107,7 +125,6 @@ if __name__ == "__main__":
 
     # subSystems.pyの定義に基づいてテーブルの作成(初回のみ)
     with app.app_context():
-        # db.metadata.create_all(db.engines["auth"])
         db.drop_all()   #初期化
         db.create_all() #テーブル作成
         seed_data(app) 

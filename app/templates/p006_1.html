@@ -1,0 +1,32 @@
+<!--
+    画面ID  :   P006-1 
+    入力    :   編集する備品情報
+    内容    :   備品情報(name, remark, categories)を入力するフォームを出し、初期値を元の備品情報とする。
+    出力    :   変更があれば、入力されたフォームを出力として編集情報伝送処理(/edit_itemのPOSTメソッド呼び出し)
+                なければ、検索一覧画面(/のGETメソッド呼び出し)
+-->
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <title>備品情報編集</title>
+    </head>
+    <body text-align: center, margin: 0 auto;>
+        <h2>備品情報の編集</h2>
+        <form method="POST" action="/edit_item">
+            備品名    :<br>
+            <input type="text" name="name" value="{{item.name}}"><br>
+
+            カテゴリー:<br>
+            {% for category in categories %}
+                <input type="checkbox" name="category_ids" value="{{ category.id }}"
+                {% if category in item.categories %} checked {% endif %}>
+                {{ category.name }}
+            {% endfor %}<br>
+
+            備考     :<br>
+            <textarea name="remark">{{item.remark}}</textarea><br>
+
+            <button type="submit">編集</button>
+        </form>
+    </body>

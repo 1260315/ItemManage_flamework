@@ -31,7 +31,7 @@ def seed_data(app):
         # 選択されたカテゴリを追加
         category_ids = [1, 2, 3, 4, 5]
         for cid in category_ids:
-            category = Categories.query.get(int(cid))
+            category = db.session.get(Categories, int(cid))
             if category:    # categoryがNULLじゃなければ
                 test_item.categories.append(category)
 
