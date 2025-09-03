@@ -23,6 +23,7 @@ def seed_data(app):
 
 
         #備品情報のテストデータ
+        #よくない書き方をしてる。たぶん。テスト用だからよし。
         test_item = Items(
             name="パソコン一式",
             registrant_id=1260315,
@@ -31,7 +32,7 @@ def seed_data(app):
         # 選択されたカテゴリを追加
         category_ids = [1, 2, 3, 4, 5]
         for cid in category_ids:
-            category = db.session.get(Categories, int(cid))
+            category = db.session.get(Categories, cid)
             if category:    # categoryがNULLじゃなければ
                 test_item.categories.append(category)
 

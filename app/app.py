@@ -86,14 +86,22 @@ def edit_item():
             return render_template("p006_1.html", item=edit_item, categories=categories)
 
     elif request.method == 'POST':
+        id = request.form["id"]
         name = request.form["name"]
         category_ids = request.form.getlist("category_ids")
         remark = request.form["remark"]
         
         #以下、編集情報確認処理と、伝送処理を行う
 
-        return redirect("/")
+        #編集情報確認処理
+        checked = Items.check(id, name, category_ids, remark)
 
+        if not checked:     #変更がない
+            return redirect("/")
+        else:               #変更がある
+            #編集情報伝送処理
+            edited_item = Items.edit(id, name, category_ids, remark)
+            return render_template("p006_2.html", item=edited_item)
 
 #===================================================================
 #削除業務

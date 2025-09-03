@@ -12,8 +12,12 @@
         <title>備品情報編集</title>
     </head>
     <body text-align: center, margin: 0 auto;>
+        <header>
+            <h1>備品管理システム テスト</h1>
+        </header>
         <h2>備品情報の編集</h2>
         <form method="POST" action="/edit_item">
+            <input type="hidden" name="id" value="{{ item.id }}">
             備品名    :<br>
             <input type="text" name="name" value="{{item.name}}"><br>
 
@@ -28,5 +32,8 @@
             <textarea name="remark">{{item.remark}}</textarea><br>
 
             <button type="submit">編集</button>
+        </form>
+        <form method="GET" action="/">
+            <button type="submit" >検索画面に戻る</button>
         </form>
     </body>

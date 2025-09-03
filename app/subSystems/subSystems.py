@@ -43,12 +43,60 @@ class Items(db.Model):
     #idからデータの内容を参照する
     @classmethod
     def refer(cls, id):
-        return cls.query.get(int(id)) 
+        return cls.query.get(id) 
+
+    #備品編集情報確認処理
+    #編集前と編集後に違いがあるか確認する処理
+    @classmethod
+    def check(cls, id, name, category_ids, remark):
+        bf_item = cls.query.get(id) 
+
+        #編集の前後のデータをdictに変換
+        #このとき、bfのカテゴリーをidでリストにする
+        # =>formでidのリストで入力されるため
+        bf_category_ids = [c.id for c in bf_item.categories]
+        bf_dict = {
+            "name": bf_item.name,
+            "category_ids": bf_category_ids,
+            "remark": bf_item.remark,
+        }
+
+        category_ids = [int(c_id) for c_id in category_ids]
+        af_dict = {
+            "name": name,
+            "category_ids": category_ids,
+            "remark": remark,
+        }
+
+        #値に違いがあるか検証
+        #違えば1, 違わなければNoneを返す
+        for key in ["name", "category_ids", "remark"]:
+            if bf_dict[key] != af_dict[key]:
+                print(bf_dict[key])
+                print(af_dict[key])
+                return 1
+        return None
+
 
     #備品編集情報伝送処理
     #データのidと編集内容を引数にとって、データベースの内容を変更する
-    #@classmethod
-    #def edit(cls, id, name, category_id, registrant_id, date, remark):
+    @classmethod
+    def edit(cls, id, name, category_ids, remark):
+        edit_item = cls.query.get(id)
+        edit_item.name = name
+        edit_item.remark = remark
+        
+        #いったんcategoriesを空にする
+        edit_item.categories = []
+        for cid in category_ids:
+            category = db.session.get(Categories, cid)
+            if category:    # categoryがNULLじゃなければ
+                edit_item.categories.append(category)
+
+        db.session.commit() 
+
+        return edit_item
+
 
     #備品情報削除処理
     #削除するデータのidを受け取って、データを削除する
