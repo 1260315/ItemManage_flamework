@@ -20,9 +20,9 @@ https://prog-8.com/docs/git-env-win  <br>
 レポジトリをクローンしたいディレクトリに移動して、以下のコマンドを実行する。
 
 ```
-git clone https://github.com/SekimenGorira/Item-management-system.git
+git clone https://github.com/1260315/ItemManage_flamework.git
 ```
-ディレクトリをlsで見ると、Item-management-systemというディレクトリが追加されているはず。
+ディレクトリをlsで見ると、ItemManage_flameworkというディレクトリが追加されているはず。
 
 ### 2.プルする
 新しく更新された内容を反映したいときは、クローンしたリポジトリでpullできるはず。たぶん。
@@ -31,7 +31,7 @@ git pull --rebase
 ```
 
 ## Dockerの使い方
-コンテナを起動すると、mysqlとapp.pyが立ち上がって、Webページ (http://localhost:8080/) が開けるようになる。
+コンテナを起動すると、mysqlとapp.pyが立ち上がって、Webページ (http://localhost:5000/) が開けるようになる。
 
 ### 1.Dockerをインストールする
 以下のWebページを参考に、Docker Desktopをインストールする。
@@ -40,5 +40,6 @@ https://qiita.com/zembutsu/items/a98f6f25ef47c04893b3
 ### 2.ビルド・起動
 クローンしたItem-management-systemディレクトリで、コンテナをビルド・起動する。
 ```
-docker-compose -f ./docker-compose-dev.yaml up --build
+docker-compose -f ./docker-compose.yml up --build
 ```
+
