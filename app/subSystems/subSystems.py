@@ -10,8 +10,8 @@ from datetime import datetime
 from sqlalchemy.sql import func
 
 db = SQLAlchemy()
-# # 備品情報管理システム
 
+# # 備品情報管理システム
 # equipment_db に入れるモデル
 
 # カテゴリーテーブル ==================================
@@ -21,7 +21,6 @@ class Categories(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(20), nullable=False)
-
 
 # 備品情報テーブル   ==================================
 class Items(db.Model):
@@ -53,7 +52,7 @@ class Items(db.Model):
 
         #編集の前後のデータをdictに変換
         #このとき、bfのカテゴリーをidでリストにする
-        # =>formでidのリストで入力されるため
+        # =>formではidのリストで出力されるため
         bf_category_ids = [c.id for c in bf_item.categories]
         bf_dict = {
             "name": bf_item.name,
@@ -119,7 +118,7 @@ class ItemCategory(db.Model):
     item_id = db.Column(db.Integer, db.ForeignKey("items.id"), primary_key=True)
     category_id = db.Column(db.Integer, db.ForeignKey("categories.id"), primary_key=True)
 
-# 多対多リレーション
+# 多対多リレーション ==================================
 Categories.items = db.relationship(
     "Items",                     # 対象となるモデル名（文字列 or クラス）
     secondary = ItemCategory.__table__,    # 多対多の場合に使う中間テーブル
