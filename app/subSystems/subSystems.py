@@ -10,7 +10,7 @@ from flask import g
 def get_itemdb():
     if "item_db" not in g:
         g.item_db = mysql.connector.connect(
-            host="localhost",
+            host="db",
             user="root",
             password="password",
             database="item_db",
@@ -19,7 +19,7 @@ def get_itemdb():
 
     return g.item_db
 
-def close_itemdb():
+def close_itemdb(e=None):   #e=Noneはなに？
     item_db = g.pop("item_db", None)
     if item_db is not None:
         item_db.close()
@@ -39,47 +39,163 @@ def init_itemdb():
 
     cursor.close()
     
-    close_itemdb(db)
+    close_itemdb()
     print("DBを初期化しました")
 
-class Category():
-
+class Category:
     @classmethod
     def get_all(cls):
         db = get_itemdb()
         cursor = db.cursor(dictionary=True)
-
-        cursor.execute("""
-            SELECT c.id, c.name
-            FROM categories c
-            """)
-        categories = cursor.fetchall()
-
+        cursor.execute("SELECT id, name FROM categories")
+        data = cursor.fetchall()
         cursor.close()
+        return data
 
-        return categories
+    @classmethod
+    def get_by_id(cls, cid):
+        db = get_itemdb()
+        cursor = db.cursor(dictionary=True)
+        cursor.execute("SELECT id, name FROM categories WHERE id=%s", (cid,))
+        data = cursor.fetchone()
+        cursor.close()
+        return data
+
+    @classmethod
+    def insert(cls, name):
+        db = get_itemdb()
+        cursor = db.cursor()
+        cursor.execute("INSERT INTO categories (name) VALUES (%s)", (name,))
+        cursor.close()
+        return True
+
+    @classmethod
+    def delete(cls, cid):
+        db = get_itemdb()
+        cursor = db.cursor()
+        cursor.execute("DELETE FROM categories WHERE id=%s", (cid,))
+        cursor.close()
+        return True
 
 
 class Item():
 
     @classmethod
     def get_all(cls):
-
         db = get_itemdb()
         cursor = db.cursor(dictionary=True)
 
         cursor.execute("""
-            SELECT i.id, i.name, i.remark, i.registrant_id, GROUP_CONCAT(c.name) as category_names
+            SELECT i.id, i.name, i.remark, i.registrant_id, i.created_at,
+                   GROUP_CONCAT(c.id) AS category_ids,
+                   GROUP_CONCAT(c.name) AS category_names
             FROM items i
             LEFT JOIN item_category ic ON i.id = ic.item_id
             LEFT JOIN categories c ON ic.category_id = c.id
             GROUP BY i.id
         """)
-
         items = cursor.fetchall()
-        cursor.close()
 
+        # categoriesをリストに変換してテンプレートでmap(attribute='name')を使えるようにする
+        for item in items:
+            if item['category_ids']:
+                ids = item['category_ids'].split(',')
+                names = item['category_names'].split(',')
+                item['categories'] = [{'id': int(cid), 'name': name} for cid, name in zip(ids, names)]
+            else:
+                item['categories'] = []
+
+        cursor.close()
         return items
+
+    @classmethod
+    def refer(cls, id):
+        db = get_itemdb()
+        cursor = db.cursor(dictionary=True)
+        cursor.execute("""
+            SELECT i.id, i.name, i.remark, i.registrant_id, i.created_at,
+                   GROUP_CONCAT(c.id) AS category_ids,
+                   GROUP_CONCAT(c.name) AS category_names
+            FROM items i
+            LEFT JOIN item_category ic ON i.id = ic.item_id
+            LEFT JOIN categories c ON ic.category_id = c.id
+            WHERE i.id = %s
+            GROUP BY i.id
+        """, (id,))
+        item = cursor.fetchone()
+
+        if item:
+            if item['category_ids']:
+                ids = item['category_ids'].split(',')
+                names = item['category_names'].split(',')
+                item['categories'] = [{'id': int(cid), 'name': name} for cid, name in zip(ids, names)]
+            else:
+                item['categories'] = []
+
+        cursor.close()
+        return item
+
+    @classmethod
+    def insert(cls, name, registrant_id, remark, category_ids):
+        db = get_itemdb()
+        cursor = db.cursor()
+
+        # 1. items テーブルに登録
+        cursor.execute(
+            "INSERT INTO items (name, registrant_id, remark) VALUES (%s, %s, %s)",
+            (name, registrant_id, remark)
+        )
+        item_id = cursor.lastrowid  # 新規登録された item の ID
+
+        # 2. item_category テーブルに登録
+        for cid in category_ids:
+            cursor.execute(
+                "INSERT INTO item_category (item_id, category_id) VALUES (%s, %s)",
+                (item_id, cid)
+            )
+
+        cursor.close()
+        db.commit()
+
+        return 
+
+    @classmethod
+    def edit(cls, id, name, category_ids, remark):
+        db = get_itemdb()
+        cursor = db.cursor()
+
+        # itemsテーブルを更新
+        cursor.execute("""
+            UPDATE items
+            SET name=%s, remark=%s
+            WHERE id=%s
+        """, (name, remark, id))
+
+        # item_category をいったん削除して再登録
+        cursor.execute("DELETE FROM item_category WHERE item_id=%s", (id,))
+        for cid in category_ids:
+            cursor.execute("INSERT INTO item_category (item_id, category_id) VALUES (%s,%s)", (id, cid))
+
+        cursor.close()
+        db.commit()
+
+        return cls.refer(id)
+
+    @classmethod
+    def delete(cls, id):
+        db = get_itemdb()
+        cursor = db.cursor()
+        delete_item = cls.refer(id)
+        if not delete_item:
+            return None
+        else:
+            # 先に item_category を削除
+            cursor.execute("DELETE FROM item_category WHERE item_id=%s", (id,))
+            # items を削除
+            cursor.execute("DELETE FROM items WHERE id=%s", (id,))
+            cursor.close()
+            db.commit()
+            return delete_item
 
 
 # from flask_sqlalchemy import SQLAlchemy
