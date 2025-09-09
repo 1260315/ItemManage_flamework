@@ -1,10 +1,5 @@
 Flask==3.1.1
 Flask-login==0.6.3
-Flask-SQLAlchemy==3.1.1
 flask-mysqldb==2.0.0
 pandas==2.2.3
-pymysql==1.1.1
-cryptography==45.0.2
-gunicorn==23.0.0
-openpyxl==3.1.5
-xlrd==2.0.1
+mysql-connector-python
