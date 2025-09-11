@@ -20,6 +20,9 @@
             <input type="hidden" name="id" value="{{ item.id }}">
             備品名    :<br>
             <input type="text" name="name" value="{{item.name}}", required, minlength="1", maxlength="20"><br>
+            { % if error == name % }
+                <!--例外処理-->
+            { % endif % }
 
             カテゴリー:<br>
             {% for category in categories %}
@@ -29,7 +32,7 @@
             {% endfor %}<br>
 
             備考     :<br>
-            <textarea name="remark", minlength="1", maxlength="100">{{item.remark}}</textarea><br>
+            <textarea name="remark">{{item.remark}}</textarea><br>
 
             <button type="submit">編集</button>
         </form>
