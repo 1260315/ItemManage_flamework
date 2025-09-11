@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+
+    <title>備品管理システム_利用者登録</title>
+    
+</head>
+<body>
+    <center>
+    <div class="container">
+         <h1>利用者登録</h1>
+       <form method="post" action="/login">
+         <label for="username">学籍番号:</label>
+         <input type="text" id="username" name="username" required><br><br>
+
+         <label for="password">パスワード:</label>
+         <input type="password" id="password" name="password" required><br><br>
+
+         
+        <p>・権限を選んでください</p>
+
+        <label>
+        <input type="radio" name="status" value="new">
+          管理者(admin)
+        </label><br>
+
+        <label>
+        <input type="radio" name="status" value="used">
+          一般ユーザ
+        </label><br>
+
+  
+
+        <button type="submit">登録</button>
+     </form>
+     
+    </div>     
+    </center>
+        
+</body>
+</html>
