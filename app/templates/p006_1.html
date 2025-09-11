@@ -19,10 +19,10 @@
         <form method="POST" action="/edit_item">
             <input type="hidden" name="id" value="{{ item.id }}">
             備品名    :<br>
-            <input type="text" name="name" value="{{item.name}}", required, minlength="1", maxlength="20"><br>
-            { % if error == name % }
-                <!--例外処理-->
-            { % endif % }
+            <input type="text" name="name" value="{{item.name}}"><br>
+            {% if errors.name %}
+                <span style="color:red;">{{ errors.name }}</span><br>
+            {% endif %}
 
             カテゴリー:<br>
             {% for category in categories %}
@@ -33,6 +33,9 @@
 
             備考     :<br>
             <textarea name="remark">{{item.remark}}</textarea><br>
+            {% if errors.remark %}
+                <span style="color:red;">{{ errors.remark }}</span><br>
+            {% endif %}
 
             <button type="submit">編集</button>
         </form>

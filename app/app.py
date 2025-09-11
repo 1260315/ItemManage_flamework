@@ -5,7 +5,7 @@ app.py
 エンドポイントへのルーティングを定義する
 """
 from flask import Flask, render_template, request, redirect, url_for, session
-from subSystems.subSystems import get_itemdb, close_itemdb, init_itemdb, Item, Category
+from subSystems.item import close_itemdb, init_itemdb, Item, Category
 
 # Flaskアプリ初期化
 app = Flask(__name__)
@@ -39,7 +39,6 @@ def add_item():
     remark = request.form.get("remark", "")
     category_ids = request.form.getlist("category_ids")
     category_ids = [int(cid) for cid in category_ids]
-    print(category_ids)
  
     Item.insert(name, registrant_id, remark, category_ids)
     return redirect("/")
@@ -50,21 +49,27 @@ def add_item():
 def edit_item():
     if request.method == 'GET':
         edit_id = request.args.get("id")
-        if not edit_id:
-            return redirect("/")
         edit_item = Item.refer(edit_id)
         if not edit_item:
+            print("error:route = /edit_item, mesthod=GET")
             return redirect("/")
         categories = Category.get_all()
-        return render_template("p006_1.html", item=edit_item, categories=categories)
+        return render_template("p006_1.html", item=edit_item, categories=categories, errors=[])
 
     elif request.method == 'POST':
         id = request.form["id"]
         name = request.form["name"]
         category_ids = [int(cid) for cid in request.form.getlist("category_ids")]
         remark = request.form.get("remark","")
-        edited_item = Item.edit(id, name, category_ids, remark)
-        return render_template("p006_2.html", item=edited_item)
+
+        errors = Item.check(name, remark)
+        if errors : #入力形式に問題があったとき、エラーメッセージとともに編集画面をもう一度提示する。
+            edit_item = Item.refer(id)
+            categories = Category.get_all()
+            return render_template("p006_1.html", item=edit_item, categories=categories, errors=errors)
+        else:
+            edited_item = Item.edit(id, name, category_ids, remark)
+            return render_template("p006_2.html", item=edited_item)
 
 #===================================================================
 # 備品削除
@@ -72,10 +77,9 @@ def edit_item():
 def delete_item():
     if request.method == 'GET':
         delete_id = request.args.get("id")
-        if not delete_id:
-            return redirect("/")
         delete_item = Item.refer(delete_id)
         if not delete_item:
+            print("error:route = /delete_item, mesthod=GET")
             return redirect("/")
         return render_template("p007_1.html", item=delete_item)
 
@@ -83,6 +87,7 @@ def delete_item():
         id = request.form["id"]
         delete_item = Item.delete(id)
         if not delete_item:
+            print("error:route = /delete_item, mesthod=POST")
             return redirect("/")
         else:
             return render_template("p007_2.html", item=delete_item)

@@ -1,7 +1,7 @@
 """
-subSystems/subSystems.py
+subSystems/item.py
 
-備品情報管理システム。
+備品情報管理システムを想定。
 備品情報データベースのテーブルを定義する
 """
 import mysql.connector
@@ -42,6 +42,8 @@ def init_itemdb():
     close_itemdb()
     print("DBを初期化しました")
 
+#カテゴリーテーブルの操作========================================
+
 class Category:
     @classmethod
     def get_all(cls):
@@ -61,22 +63,7 @@ class Category:
         cursor.close()
         return data
 
-    @classmethod
-    def insert(cls, name):
-        db = get_itemdb()
-        cursor = db.cursor()
-        cursor.execute("INSERT INTO categories (name) VALUES (%s)", (name,))
-        cursor.close()
-        return True
-
-    @classmethod
-    def delete(cls, cid):
-        db = get_itemdb()
-        cursor = db.cursor()
-        cursor.execute("DELETE FROM categories WHERE id=%s", (cid,))
-        cursor.close()
-        return True
-
+#備品情報テーブルの操作==========================================
 
 class Item():
 
@@ -196,3 +183,19 @@ class Item():
             cursor.close()
             db.commit()
             return delete_item
+        
+    #エラーがなければ空、エラーがあればエラーメッセージを辞書形式でいれて返す
+    @classmethod
+    def check(cls, name, remark):
+        errors = {}     #空のエラーリストを作成
+
+        if not name:
+            errors["name"] = "備品名は必須項目です。"
+        elif len(name) > 10:
+            errors["name"] = "備品名は10文字以内で入力してください。"
+        
+        if len(remark) > 100:
+            errors["remark"] = "備考は100文字以内で入力してください"
+        
+        return errors
+
