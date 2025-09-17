@@ -11,7 +11,17 @@
         
          <h2>ログインエラー</h2>
          <p>利用者登録に失敗しました！</p>
-       <form method="post" action="/userregister">
+
+         #メッセージ表示
+         {% if errors %}
+             <ul style="color:red;">
+             {% for error in errors %}
+                 <li>{{ error }}</li>
+             {% endfor %}
+             </ul>
+         {% endif %}
+
+       <form method="get" action="/userregister">
         <button type="submit">利用者登録画面に戻る</button>
        </form>
      

@@ -8,7 +8,7 @@ from flask import Flask, render_template, request, redirect, url_for, session,se
 import io
 import pandas as pd
 from subSystems.item import close_itemdb, init_itemdb, Item, Category
-from subSystems.user import close_userdb, init_userdb,User
+from subSystems.user import close_userdb, init_userdb,  User
 
 # Flaskアプリ初期化
 app = Flask(__name__)
@@ -17,6 +17,7 @@ app.secret_key = " im_secret_key "
 #app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=1)
 
 app.teardown_appcontext(close_itemdb)
+app.teardown_appcontext(close_userdb)
 
 ###以下、エンドポイントへのルーティング
 #===================================================================
@@ -103,12 +104,24 @@ def register_user():
     else:
         studentID = request.form['studentID']
         password = request.form['password']
-        authority = request.form.get('authority', 1)  # デフォルト一般ユーザ
+        authority = request.form.get('authority', 1)  #権限は絶対入力
+        #authority = request.form['authority']
+
+        #入力値チェック
         errors = User.check(studentID, password)
         if errors:
             return render_template("P003-2_userregistererror.html", errors=errors)
+        
+        #既に登録された学籍番号でないかチェック
+        """
+        existing_user = User.query.filter_by(studentID=studentID).first()
+        if existing_user:
+            errors = [f"学籍番号 {studentID} は既に登録されています"]
+            return render_template("P003-2_userregistererror.html", errors=errors)
+        """
+        #登録
         User.insert(studentID, password, authority)
-        return redirect(url_for('login'))
+        return render_template("P003-3_userregistercomplate.html",studentID=studentID)     
     
 #===================================================================
 #ログイン
@@ -129,6 +142,7 @@ def login():
                 #管理者
                 return redirect(url_for('P001-2_home.html'))
             else:
+                #一般ユーザ
                 return redirect(url_for('P001-3_home.html'))
         else:
             return render_template("P001-4_loginerror.html", error="学籍番号またはパスワードが違います")
@@ -166,7 +180,7 @@ def export_items():
 
 ### ===== アプリ実行 ===== ###
 if __name__ == "__main__":
-    with app.app_context():
-        init_itemdb() 
+    # with app.app_context():
+    #     init_itemdb() 
 
     app.run(debug=True, host="0.0.0.0", port=5000)

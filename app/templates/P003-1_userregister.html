@@ -9,7 +9,7 @@
     <center>
     <div class="container">
          <h1>利用者登録</h1>
-       <form method="post" action="/register">
+       <form method="post" action="/register_user">
          <label for="studentID">学籍番号:</label>
          <input type="text" id="studentID" name="studentID" required><br><br>
 
@@ -20,12 +20,12 @@
         <p>・権限を選んでください</p>
 
         <label>
-        <input type="radio" name="role" value="1" required>
+        <input type="radio" name="authority" value="0" required>
           管理者(admin)
         </label><br>
 
         <label>
-        <input type="radio" name="role" value="0" required>
+        <input type="radio" name="authority" value="1" >
           一般ユーザ
         </label><br>
 

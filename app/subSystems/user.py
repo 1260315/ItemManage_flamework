@@ -6,6 +6,8 @@ subSystems/user.py
 """
 import mysql.connector
 from flask import g
+from werkzeug.security import check_password_hash, generate_password_hash
+
 
 def get_userdb():
     if "user_db" not in g:
@@ -79,14 +81,14 @@ class User:
         return data
 
     @classmethod
-    def insert(cls, studentID, password, role=1):
+    def insert(cls, studentID, password, authority=1):
         """ユーザ新規登録"""
         db = get_userdb()
         cursor = db.cursor()
         password_hash = generate_password_hash(password)
         cursor.execute(
-            "INSERT INTO users (studentID, password_hash, role) VALUES (%s, %s, %s)",
-            (studentID, password_hash, role)
+            "INSERT INTO users (studentID, password_hash, authority) VALUES (%s, %s, %s)",
+            (studentID, password_hash, authority)
         )
         cursor.close()
         db.commit()
@@ -105,11 +107,11 @@ class User:
         db.commit()
 
     @classmethod
-    def update_role(cls, uid, role):
+    def update_authority(cls, uid, authority):
         """権限変更"""
         db = get_userdb()
         cursor = db.cursor()
-        cursor.execute("UPDATE users SET role=%s WHERE id=%s", (role, uid))
+        cursor.execute("UPDATE users SET authority=%s WHERE id=%s", (role, uid))
         cursor.close()
         db.commit()
 
@@ -127,7 +129,15 @@ class User:
         """ログイン用認証"""
         user = cls.get_by_studentID(studentID)
         if user and check_password_hash(user["password_hash"], password):
-            return user  # user["role"]で0か1か確認できる
+            return user  # user["authority"]で0か1か確認できる
+        return None
+    
+    @classmethod
+    def authenticate(cls, studentID, password):
+        """学籍番号とパスワードでユーザを認証して返す。失敗ならNone"""
+        user = cls.verify_password(studentID=studentID).first()
+        if user and check_password_hash(user.password_hash, password):
+            return user
         return None
 
     @classmethod

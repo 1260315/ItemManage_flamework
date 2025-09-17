@@ -6,7 +6,7 @@ Flaskアプリの設定を定義するファイル。
 """
 
 # 会員管理データベースURI
-SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:password@db/auth_db'
+SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:password@db/user_db'
 
 # 備品情報データベースURI
 # URI : Uniform Resource Identifier（統一リソース識別子）
@@ -14,7 +14,7 @@ ITEM_DB_URI = 'mysql+pymysql://root:password@db/item_db'
 
 # DBバインド設定
 SQLALCHEMY_BINDS = {
-    'auth': SQLALCHEMY_DATABASE_URI,
+    'user': SQLALCHEMY_DATABASE_URI,
     'item': ITEM_DB_URI,
 }
 
