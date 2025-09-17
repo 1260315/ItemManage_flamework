@@ -17,6 +17,7 @@ def get_itemdb():
             autocommit=True
         )
 
+    print("item_dbとのコネクション確立に成！！")
     return g.item_db
 
 def close_itemdb(e=None):   #e=Noneはなに？
@@ -24,20 +25,20 @@ def close_itemdb(e=None):   #e=Noneはなに？
     if item_db is not None:
         item_db.close()
 
-def init_itemdb():
-    db = get_itemdb()
-    cursor = db.cursor()
+# def init_itemdb():
+#     db = get_itemdb()
+#     cursor = db.cursor()
 
-    # seed.sql を読み込む
-    with open("seed.sql", encoding="utf-8") as f:
-        sql_commands = f.read().split(";")
+#     # seed.sql を読み込む
+#     with open("seed.sql", encoding="utf-8") as f:
+#         sql_commands = f.read().split(";")
 
-    for command in sql_commands:
-        command = command.strip()
-        if command:
-            cursor.execute(command)
+#     for command in sql_commands:
+#         command = command.strip()
+#         if command:
+#             cursor.execute(command)
 
-    cursor.close()
+#     cursor.close()
     
     close_itemdb()
     print("DBを初期化しました")

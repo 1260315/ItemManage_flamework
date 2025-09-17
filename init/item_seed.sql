@@ -6,6 +6,7 @@ seed.sql
 
 /*--備品情報データベース-----------------------------------*/
 
+CREATE DATABASE IF NOT EXISTS item_db;
 USE item_db;
 
 DROP TABLE IF EXISTS item_category;
@@ -22,7 +23,7 @@ CREATE TABLE IF NOT EXISTS categories (
 
 CREATE TABLE IF NOT EXISTS items (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(10) NOT NULL,
+    name VARCHAR(20) NOT NULL,
     registrant_id INT NOT NULL,
     remark VARCHAR(100),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL

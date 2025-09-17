@@ -5,15 +5,13 @@ app.py
 エンドポイントへのルーティングを定義する
 """
 from flask import Flask, render_template, request, redirect, url_for, session
-from subSystems.item import close_itemdb, init_itemdb, Item, Category
+from subSystems.item import close_itemdb,  Item, Category
 
 # Flaskアプリ初期化
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
 app.secret_key = " im_secret_key "
 #app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=1)
-
-app.teardown_appcontext(close_itemdb)
 
 ###以下、エンドポイントへのルーティング
 #===================================================================
@@ -32,16 +30,36 @@ def test():
 
 #===================================================================
 # 備品登録
-@app.route('/add_item', methods=['POST'])
-def add_item():
-    name = request.form["name"]
-    registrant_id = request.form["registrant_id"]
-    remark = request.form.get("remark", "")
-    category_ids = request.form.getlist("category_ids")
-    category_ids = [int(cid) for cid in category_ids]
+# @app.route('/add_item', methods=['POST'])
+# def add_item():
+#     name = request.form["name"]
+#     registrant_id = request.form["registrant_id"]
+#     remark = request.form.get("remark", "")
+#     category_ids = request.form.getlist("category_ids")
+#     category_ids = [int(cid) for cid in category_ids]
  
-    Item.insert(name, registrant_id, remark, category_ids)
-    return redirect("/")
+#     Item.insert(name, registrant_id, remark, category_ids)
+#     return redirect("/")
+
+@app.route('/add_item', methods=['GET', 'POST'])
+def add_item():
+
+    if request.method == 'GET':
+        categories = Category.get_all()
+        return render_template("registration.html", categories=categories)
+    
+    elif request.method == 'POST':
+        name = request.form["name"].strip()
+        registrant_id = request.form["registrant_id"]
+        remark = request.form.get("remark", "").strip()#.strip()で空白文字列を削除
+        if not name or not remark:#未入力チェック
+            return "備品名と登録者IDは必須入力項目です",400
+        
+        category_ids = request.form.getlist("category_ids")
+        category_ids = [int(cid) for cid in category_ids]
+        Item.insert(name, registrant_id, remark, category_ids)
+        return render_template('registration.html',result = result)
+
 
 #===================================================================
 # 備品編集
@@ -96,7 +114,7 @@ def delete_item():
 
 ### ===== アプリ実行 ===== ###
 if __name__ == "__main__":
-    with app.app_context():
-        init_itemdb() 
+    # with app.app_context():
+        # init_itemdb() 
 
     app.run(debug=True, host="0.0.0.0", port=5000)

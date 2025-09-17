@@ -48,12 +48,13 @@
 <body>
     <h1 style="text-align: center;">備品登録業務</h1>
     <form action="/add_item" method="POST">
-        <input type="text" placeholder="備品名" name="name">
+        <input type="text" placeholder="備品名" name="name" maxlength ="5"><br> 
+        <input type="number" placeholder="登録者ID" name="registrant_id"><br>
         <p></p>
         <p>カテゴリー:</p>
         {% for category in categories %}
             <input type="checkbox" name="category_ids" value="{{ category.id }}" class = "checkbox-group">
-            {{ category.name }}<br>
+            {{ category.name }}
         {% endfor %}
         </div>
         <p></p>
