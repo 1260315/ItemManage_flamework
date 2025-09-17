@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>備品登録業務</title>
+    <style>
+        body{
+            text-align: center;
+        }
+               /* 備考入力欄のスタイル */
+        .remarks-input {
+            width: 500px; /* 幅を500ピクセルに設定 */
+            height: 100px; /* 高さを100ピクセルに設定 */
+            padding: 8px; /* 内側の余白 */
+            margin-bottom: 10px; /* 下に余白 */
+            border: 1px solid #ccc; /* 枠線 */
+            border-radius: 5px; /* 角を少し丸くする */
+            box-sizing: border-box; /* paddingとborderをwidth/heightに含める */
+            font-size: 16px; /* 文字の大きさ */
+        }
+        
+        .checkbox-group {
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin: 20px auto;
+            width: fit-content;
+            max-width: 800px; /* 横並びにするため最大幅を広げました */
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: left;
+            
+            /* --- ここからFlexboxの設定 --- */
+            display: flex; /* 子要素（checkbox-item）をFlexboxアイテムにする */
+            flex-wrap: wrap; /* 画面幅が足りなくなったら折り返す */
+            justify-content: center; /* アイテムを中央に寄せる（オプション） */
+            gap: 20px; /* 各アイテム間の隙間を20pxにする */
+            /* --- Flexboxの設定ここまで --- */
+        }
+         .submit-button {
+            display: block; /* ボタンをブロック要素にして中央寄せ可能に */
+            width: 200px; /* ボタンの幅 */
+            padding: 15px 30px;
+            margin: 30px auto 0;
+         }
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center;">備品登録業務</h1>
+    <form action="/add_item" method="POST">
+        <input type="text" placeholder="備品名" name="name">
+        <p></p>
+        <p>カテゴリー:</p>
+        {% for category in categories %}
+            <input type="checkbox" name="category_ids" value="{{ category.id }}" class = "checkbox-group">
+            {{ category.name }}<br>
+        {% endfor %}
+        </div>
+        <p></p>
+        <textarea  placeholder="備考" name="remark" class="remarks-input"></textarea>
+        <p></p>
+        <button type="submit" value="登録" class="submit-button"></button>
+    </form>
+    <p></p>
+    {% if result %}
+    <div>
+        {{result | default('未登録')}}
+    </div>
+    {% endif %}
+</body>
+</html>
