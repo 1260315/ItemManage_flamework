@@ -96,6 +96,17 @@ def delete_item():
         else:
             return render_template("p007_2.html", item=delete_item)
 #===================================================================
+#
+@app.route('/home', methods=['GET','POST'])
+def home():
+
+    authority = session['authority']
+    if authority == 0:
+         return render_template('P001-2_home.html')
+    else:
+         return render_template('P001-3_home.html')
+
+#===================================================================
 #利用者登録
 @app.route('/register_user', methods=['GET','POST'])
 def register_user():
@@ -104,8 +115,8 @@ def register_user():
     else:
         studentID = request.form['studentID']
         password = request.form['password']
-        authority = request.form.get('authority', 1)  #権限は絶対入力
-        #authority = request.form['authority']
+        #authority = request.form.get('authority', 1)  #権限は絶対入力
+        authority = request.form['authority']
 
         #入力値チェック
         errors = User.check(studentID, password)
@@ -133,19 +144,19 @@ def login():
         studentID = request.form['studentID']
         password = request.form['password']
         user = User.authenticate(studentID, password)
+
+
         if user:
             session['user_id'] = user.id
             session['studentID'] = user.studentID
             session['authority'] = user.authority
             
-            if user.authority == 0:
-                #管理者
-                return redirect(url_for('P001-2_home.html'))
-            else:
-                #一般ユーザ
-                return redirect(url_for('P001-3_home.html'))
+           
+               
+            return redirect("/home")
+           
         else:
-            return render_template("P001-4_loginerror.html", error="学籍番号またはパスワードが違います")
+            return render_template("P001-4_roginerror.html", error="学籍番号またはパスワードが違います")
 
 #===================================================================
 # エクスポート（CSV）
@@ -177,6 +188,13 @@ def export_items():
         download_name='items.csv'
     )  
 #===================================================================
+#===================================================================
+# エクスポート（CSV）
+@app.route('/logout')
+def logout():
+    session.clear()
+   
+    
 
 ### ===== アプリ実行 ===== ###
 if __name__ == "__main__":

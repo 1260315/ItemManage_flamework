@@ -16,6 +16,7 @@ def get_itemdb():
             database="item_db",
             autocommit=True
         )
+    print("item_dbとのコネクションを確立できました！")
 
     return g.item_db
 

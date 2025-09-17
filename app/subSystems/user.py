@@ -19,6 +19,8 @@ def get_userdb():
             autocommit=True
         )
 
+    print("user_dbとのコネクションを確立できました！")
+
     return g.user_db
 
 def close_userdb(e=None):  # e=None は Flask の teardown でコールバックする際に event引数を受け取るためのデフォルト値
@@ -49,13 +51,17 @@ def init_userdb():
 # =======================================================
 
 class User:
+    def __init__(self, id, studentID, authority):
+        self.id = id
+        self.studentID = studentID
+        self.authority = authority
 
     @classmethod
     def get_all(cls):
         """全ユーザを取得"""
         db = get_userdb()
         cursor = db.cursor(dictionary=True)
-        cursor.execute("SELECT id, studentID, role FROM users")
+        cursor.execute("SELECT id, studentID, authority FROM users")
         data = cursor.fetchall()
         cursor.close()
         return data
@@ -65,7 +71,7 @@ class User:
         """ID指定でユーザ取得"""
         db = get_userdb()
         cursor = db.cursor(dictionary=True)
-        cursor.execute("SELECT id, studentID, role FROM users WHERE id=%s", (uid,))
+        cursor.execute("SELECT id, studentID, authority FROM users WHERE id=%s", (uid,))
         data = cursor.fetchone()
         cursor.close()
         return data
@@ -81,7 +87,7 @@ class User:
         return data
 
     @classmethod
-    def insert(cls, studentID, password, authority=1):
+    def insert(cls, studentID, password, authority):
         """ユーザ新規登録"""
         db = get_userdb()
         cursor = db.cursor()
@@ -111,7 +117,7 @@ class User:
         """権限変更"""
         db = get_userdb()
         cursor = db.cursor()
-        cursor.execute("UPDATE users SET authority=%s WHERE id=%s", (role, uid))
+        cursor.execute("UPDATE users SET authority=%s WHERE id=%s", (authority, uid))
         cursor.close()
         db.commit()
 
@@ -125,20 +131,27 @@ class User:
         db.commit()
 
     @classmethod
-    def verify_password(cls, studentID, password):
-        """ログイン用認証"""
-        user = cls.get_by_studentID(studentID)
-        if user and check_password_hash(user["password_hash"], password):
-            return user  # user["authority"]で0か1か確認できる
-        return None
-    
-    @classmethod
     def authenticate(cls, studentID, password):
-        """学籍番号とパスワードでユーザを認証して返す。失敗ならNone"""
-        user = cls.verify_password(studentID=studentID).first()
-        if user and check_password_hash(user.password_hash, password):
-            return user
-        return None
+        """学籍番号とパスワードでユーザーを認証"""
+        
+        
+
+        db = get_userdb()
+        cursor = db.cursor(dictionary=True)
+
+        cursor.execute("SELECT * FROM users WHERE studentID = %s", (studentID,))
+        
+        row = cursor.fetchone()
+        print(row)
+        cursor.close()
+
+        if row and check_password_hash(row["password_hash"], password):
+            # 認証成功
+
+            return cls(id=row["id"], studentID=row["studentID"], authority=row["authority"])
+        else:
+            # 認証失敗
+            return None
 
     @classmethod
     def check(cls, studentID, password):
