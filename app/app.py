@@ -7,8 +7,8 @@ app.py
 from flask import Flask, render_template, request, redirect, url_for, session,send_file
 import io
 import pandas as pd
-from subSystems.item import close_itemdb, init_itemdb, Item, Category
-from subSystems.user import close_userdb, init_userdb,  User
+from subSystems.item import close_itemdb, Item, Category
+from subSystems.user import close_userdb, User
 
 # Flaskアプリ初期化
 app = Flask(__name__)
@@ -147,7 +147,6 @@ def login():
 
 
         if user:
-            session['user_id'] = user.id
             session['studentID'] = user.studentID
             session['authority'] = user.authority
             

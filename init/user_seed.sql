@@ -11,10 +11,10 @@ DROP TABLE IF EXISTS users;
 
 /*--テーブルの作成-----------------------------------------*/
 CREATE TABLE IF NOT EXISTS users (
-    id INT AUTO_INCREMENT PRIMARY KEY,
     studentID VARCHAR(20) NOT NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL,
-    authority TINYINT(1) NOT NULL DEFAULT 1  -- 0=管理者 / 1=一般ユーザ
+    authority TINYINT(1) NOT NULL DEFAULT 1 , -- 0=管理者 / 1=一般ユーザ
+    deadoralive TINYINT(1) NOT NULL DEFAULT 1 -- 0=死亡 / 1=生存
 );
 
 /*--初期データの投入----------------------------------------*/

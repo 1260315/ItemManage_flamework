@@ -28,22 +28,22 @@ def close_userdb(e=None):  # e=None は Flask の teardown でコールバック
     if user_db is not None:
         user_db.close()
 
-#初期化
-def init_userdb():
-    db = get_userdb()
-    cursor = db.cursor()
+# #初期化
+# def init_userdb():
+#     db = get_userdb()
+#     cursor = db.cursor()
 
-    with open("seed_users.sql", encoding="utf-8") as f:
-        sql_commands = f.read().split(";")
+#     with open("seed_users.sql", encoding="utf-8") as f:
+#         sql_commands = f.read().split(";")
 
-    for command in sql_commands:
-        command = command.strip()
-        if command:
-            cursor.execute(command)
+#     for command in sql_commands:
+#         command = command.strip()
+#         if command:
+#             cursor.execute(command)
 
-    cursor.close()
-    close_userdb()
-    print("ユーザDBを初期化しました")
+#     cursor.close()
+#     close_userdb()
+#     print("ユーザDBを初期化しました")
 
 # =======================================================
 # 利用者テーブルの操作
@@ -51,8 +51,7 @@ def init_userdb():
 # =======================================================
 
 class User:
-    def __init__(self, id, studentID, authority):
-        self.id = id
+    def __init__(self, studentID, authority):
         self.studentID = studentID
         self.authority = authority
 
@@ -61,18 +60,8 @@ class User:
         """全ユーザを取得"""
         db = get_userdb()
         cursor = db.cursor(dictionary=True)
-        cursor.execute("SELECT id, studentID, authority FROM users")
+        cursor.execute("SELECT studentID, authority FROM users")
         data = cursor.fetchall()
-        cursor.close()
-        return data
-
-    @classmethod
-    def get_by_id(cls, uid):
-        """ID指定でユーザ取得"""
-        db = get_userdb()
-        cursor = db.cursor(dictionary=True)
-        cursor.execute("SELECT id, studentID, authority FROM users WHERE id=%s", (uid,))
-        data = cursor.fetchone()
         cursor.close()
         return data
 
@@ -92,43 +81,43 @@ class User:
         db = get_userdb()
         cursor = db.cursor()
         password_hash = generate_password_hash(password)
-        cursor.execute(
+        cursor.execute(#sqlに入れる
             "INSERT INTO users (studentID, password_hash, authority) VALUES (%s, %s, %s)",
             (studentID, password_hash, authority)
         )
         cursor.close()
         db.commit()
 
-    @classmethod
-    def update_password(cls, uid, new_password):
-        """パスワード変更"""
-        db = get_userdb()
-        cursor = db.cursor()
-        password_hash = generate_password_hash(new_password)
-        cursor.execute(
-            "UPDATE users SET password_hash=%s WHERE id=%s",
-            (password_hash, uid)
-        )
-        cursor.close()
-        db.commit()
+    # @classmethod
+    # def update_password(cls, uid, new_password):
+    #     """パスワード変更"""
+    #     db = get_userdb()
+    #     cursor = db.cursor()
+    #     password_hash = generate_password_hash(new_password)
+    #     cursor.execute(
+    #         "UPDATE users SET password_hash=%s WHERE id=%s",
+    #         (password_hash, uid)
+    #     )
+    #     cursor.close()
+    #     db.commit()
 
-    @classmethod
-    def update_authority(cls, uid, authority):
-        """権限変更"""
-        db = get_userdb()
-        cursor = db.cursor()
-        cursor.execute("UPDATE users SET authority=%s WHERE id=%s", (authority, uid))
-        cursor.close()
-        db.commit()
+    # @classmethod
+    # def update_authority(cls, uid, authority):
+    #     """権限変更"""
+    #     db = get_userdb()
+    #     cursor = db.cursor()
+    #     cursor.execute("UPDATE users SET authority=%s WHERE id=%s", (authority, uid))
+    #     cursor.close()
+    #     db.commit()
 
-    @classmethod
-    def delete(cls, uid):
-        """ユーザ削除"""
-        db = get_userdb()
-        cursor = db.cursor()
-        cursor.execute("DELETE FROM users WHERE id=%s", (uid,))
-        cursor.close()
-        db.commit()
+    # @classmethod
+    # def delete(cls, uid):
+    #     """ユーザ削除"""
+    #     db = get_userdb()
+    #     cursor = db.cursor()
+    #     cursor.execute("DELETE FROM users WHERE id=%s", (uid,))
+    #     cursor.close()
+    #     db.commit()
 
     @classmethod
     def authenticate(cls, studentID, password):
@@ -148,7 +137,7 @@ class User:
         if row and check_password_hash(row["password_hash"], password):
             # 認証成功
 
-            return cls(id=row["id"], studentID=row["studentID"], authority=row["authority"])
+            return cls(studentID=row["studentID"], authority=row["authority"])
         else:
             # 認証失敗
             return None
