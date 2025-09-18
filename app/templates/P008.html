@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="ja">
 <header>
     <meta charset="UTF-8">
     <title>備品管理システム</title>
@@ -57,9 +56,10 @@
             </td>
             {% endfor %}
             <td>
-                <button>編集</button>
+                <form method="get" action="/edit_item" style="display: inline;">
+                <button type="submit" name="id" value="{{row.id}}">編集</button>
+                </form>
             </td>
-            
             <td>
                 {% if session.studentID|string == row.reg|string or session.authority == 0 %}
                 <form method="POST" action="/delete_item" style="display: inline;">

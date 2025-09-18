@@ -104,11 +104,16 @@ def delete_item():
 @app.route('/home', methods=['GET','POST'])
 def home():
 
-    authority = session['authority']
-    if authority == 0:
-         return render_template('P001-2_home.html')
-    elif authority == 1:
-         return render_template('P001-3_home.html')
+    
+    if 'studentID' in session and 'authority'in session:
+        authority = session['authority']
+        print(session['studentID'])
+        print(session['authority']) 
+        if authority == 0:
+            return render_template('P001-2_home.html')
+        elif authority == 1:
+            return render_template('P001-3_home.html')
+    return redirect('/login')
 
 #===================================================================
 #利用者登録
@@ -193,13 +198,16 @@ def export_items():
 #===================================================================
 #===================================================================
 # エクスポート（CSV）
-@app.route('/logout')
+@app.route('/logout', methods=['GET','POST'])
 def logout():
     session.clear()
-   
+    return redirect('/login')
+
 #備品検索
 @app.route('/items', methods=['GET', 'POST'])
 def search():
+    if 'studentID' not in session:
+        return redirect('/login')
     FIELDS = [("name","str"),
           ("id","str"),
           ("created_at","str"),
