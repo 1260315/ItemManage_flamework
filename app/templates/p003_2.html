@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+
+    <title>備品管理システム_利用者登録エラー</title>
+    
+</head>
+<body>
+    <center>
+    <div class="container">
+        
+         <h2>ログインエラー</h2>
+         <p>利用者登録に失敗しました！</p>
+
+         #メッセージ表示
+         {% if errors %}
+             <ul style="color:red;">
+             {% for error in errors %}
+                 <li>{{ error }}</li>
+             {% endfor %}
+             </ul>
+         {% endif %}
+
+       <form method="get" action="/userregister">
+        <button type="submit">利用者登録画面に戻る</button>
+       </form>
+     
+    </div>     
+    </center>
+        
+</body>
+</html>
