@@ -52,13 +52,18 @@ def add_item():
         name = request.form["name"].strip()
         registrant_id = request.form["registrant_id"]
         remark = request.form.get("remark", "").strip()#.strip()で空白文字列を削除
-        if not name or not remark:#未入力チェック
-            return "備品名と登録者IDは必須入力項目です",400
+
+        errors = Item.check(name, remark)
+        if errors :
+            categories = Category.get_all()
+            return render_template("registration.html", categories=categories,error=errors)
         
         category_ids = request.form.getlist("category_ids")
         category_ids = [int(cid) for cid in category_ids]
-        Item.insert(name, registrant_id, remark, category_ids)
-        return render_template('registration.html',result = result)
+        item_id = Item.insert(name, registrant_id, remark, category_ids)
+        result_item = Item.refer(item_id)
+        print(result_item)
+        return render_template('registration.html',result = result_item)
 
 
 #===================================================================

@@ -145,7 +145,7 @@ class Item():
         cursor.close()
         db.commit()
 
-        return 
+        return item_id
 
     @classmethod
     def edit(cls, id, name, category_ids, remark):

@@ -49,6 +49,9 @@
     <h1 style="text-align: center;">備品登録業務</h1>
     <form action="/add_item" method="POST">
         <input type="text" placeholder="備品名" name="name" maxlength ="5"><br> 
+        {% if error %}
+        {{error | default('')}}<br>
+        {% endif %}
         <input type="number" placeholder="登録者ID" name="registrant_id"><br>
         <p></p>
         <p>カテゴリー:</p>
@@ -65,7 +68,12 @@
     <p></p>
     {% if result %}
     <div>
-        {{result | default('未登録')}}
+        {{result.id | default('未登録')}}<br>
+        {{result.name | default('未登録')}}<br>
+        {{result.remark| default('未登録')}}<br>
+        {{result.registrant_id| default('未登録')}}<br>
+        {{result.created_at | default('未登録')}}<br>
+
     </div>
     {% endif %}
 </body>
