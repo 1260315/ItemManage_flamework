@@ -199,4 +199,26 @@ class Item():
             errors["remark"] = "備考は100文字以内で入力してください"
         
         return errors
+    
+    @classmethod
+    def get_category_names(cls,item_id):
+        db = get_itemdb()
+        cursor = db.cursor()
+        
 
+        cursor.execute("""
+        SELECT c.name
+        FROM item_category ic
+        JOIN categories c ON ic.category_id = c.id
+        WHERE ic.item_id = %s
+        """, (item_id,))
+
+        # 結果取得
+        category_names = [row[0] for row in cursor.fetchall()]
+
+        # クローズ
+        cursor.close()
+        db.close()
+
+        # カンマ区切りの文字列で返す
+        return ", ".join(category_names)

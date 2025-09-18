@@ -9,6 +9,7 @@ from flask import g
 from werkzeug.security import check_password_hash, generate_password_hash
 
 
+
 def get_userdb():
     if "user_db" not in g:
         g.user_db = mysql.connector.connect(
@@ -123,7 +124,7 @@ class User:
     def authenticate(cls, studentID, password):
         """学籍番号とパスワードでユーザーを認証"""
         
-        
+        print( generate_password_hash("password123"))
 
         db = get_userdb()
         cursor = db.cursor(dictionary=True)
