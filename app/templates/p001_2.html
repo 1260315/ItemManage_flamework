@@ -3,26 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <title>備品管理システム_ホーム</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <center>
+    <header>
+      <div class="header-container">
+        <h1>備品管理システム テスト</h1>
+        <form method="GET" action="/logout" class="logout-form">
+            <button type="submit">ログアウト</button>
+        </form>
+      </div>
+    </header>
     <div class="container">
-         <h1>備品管理システム</h1>
-         
-       <form method="post">
-         
+        <form method="post">
+            <div class="button-group">
+                <button type="submit" formaction="/items">備品一覧</button>
+                <button type="submit" formaction="/register">備品登録</button>
+            </div>
 
-      <button type="submit" formaction="/items">備品一覧</button>
-      <button type="submit" formaction="/register">備品登録</button><br></br>
-      <button type="submit" formaction="/import">インポート</button>
-      <button type="submit" formaction="/export">エクスポート</button><br></br>
-      <button type="submit" formaction="/">利用者登録</button>
-      <button type="submit" formaction="/">利用者削除</button><br></br>
-      <button type="submit" formaction="/logout">ログアウト</button>
-     </form>
-     
-    </div>     
-    </center>
-        
+            <div class="button-group">
+                <button type="submit" formaction="/import">インポート</button>
+                <button type="submit" formaction="/export">エクスポート</button>
+            </div>
+
+            <div class="button-group">
+                <button type="submit" formaction="/">利用者登録</button>
+                <button type="submit" formaction="/">利用者削除</button>
+            </div>
+
+            <div class="button-group">
+                <button type="submit" formaction="/logout" class="btn-danger">ログアウト</button>
+            </div>
+        </form>
+    </div>
+
 </body>
 </html>

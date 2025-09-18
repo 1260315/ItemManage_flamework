@@ -5,7 +5,7 @@
     出力    :   確認に対して、肯定なら削除業務(/delete_itemのPOSTメソッド呼び出し)、
                 否定なら検索一覧画面(/のGETメソッド呼び出し)
 -->
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="ja">
     <head>
         <meta charset="UTF-8">
@@ -15,7 +15,8 @@
         <header>
             <h1>備品管理システム テスト</h1>
         </header>
-
+        
+        <center>
         <h2>備品情報の削除確認</h2>
         <h3>対象備品情報</h3>
 
@@ -39,4 +40,52 @@
         <form method="GET" action="/">
             <button type="submit" >だめー</button>
         </form>
-    </body>
+        </center>
+    </body> -->
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>備品情報削除確認</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- ヘッダー -->
+    <header>
+      <div class="header-container">
+        <h1>備品管理システム テスト</h1>
+        <form method="GET" action="/logout" class="logout-form">
+          <button type="submit">ログアウト</button>
+        </form>
+      </div>
+    </header>
+
+    <div class="container">
+        <h2>備品情報の削除確認</h2>
+
+        <div class="item-info">
+            <p>備品名: {{ item.name }}</p>
+            <p>カテゴリー: 
+                {% if item.categories %}
+                    {{ item.categories | map(attribute='name') | join(', ') }}
+                {% else %}
+                    未分類
+                {% endif %}
+            </p>
+            <p>登録者: {{ item.registrant_id }}</p>
+            <p>登録日: {{ item.created_at }}</p>
+            <p>備考: {{ item.remark }}</p>
+        </div>
+
+        <h3>この備品情報を削除します。よろしいですか？</h3>
+        <form method="POST" action="/delete_item">
+            <input type="hidden" name="id" value="{{ item.id }}">
+            <button type="submit">はい</button>
+        </form>
+        <form method="GET" action="/">
+            <button type="submit" class="cancel-btn">キャンセル</button>
+        </form>
+    </div>
+</body>
+</html>

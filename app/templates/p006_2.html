@@ -4,7 +4,7 @@
     内容    :   編集後の備品情報を表示して、編集が完了したことを知らせる
     出力    :   検索一覧画面("/")
 -->
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="ja">
     <head>
         <meta charset="UTF-8">
@@ -14,7 +14,8 @@
         <header>
             <h1>備品管理システム テスト</h1>
         </header>
-
+        
+        <center>
         <h2>備品情報編集確定</h2>
         備品名 : <br>
         {{ item.name }} <br>
@@ -32,5 +33,45 @@
         <form method="GET" action="/">
             <button type="submit" >検索画面に戻る</button>
         </form>
+        </center>
 
-    </body>
+    </body> -->
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>備品情報編集確定</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- ヘッダー -->
+    <header>
+      <div class="header-container">
+        <h1>備品管理システム テスト</h1>
+        <form method="GET" action="/logout" class="logout-form">
+          <button type="submit">ログアウト</button>
+        </form>
+      </div>
+    </header>
+
+    <div class="container">
+        <h2>備品情報編集確定</h2>
+        <div class="item-info">
+            <p>備品名: {{ item.name }}</p>
+            <p>カテゴリー: 
+                {% if item.categories %}
+                    {{ item.categories | map(attribute='name') | join(', ') }}
+                {% else %}
+                    未分類
+                {% endif %}
+            </p>
+            <p>備考: {{ item.remark }}</p>
+        </div>
+
+        <form method="GET" action="/">
+            <button type="submit">検索画面に戻る</button>
+        </form>
+    </div>
+</body>
+</html>

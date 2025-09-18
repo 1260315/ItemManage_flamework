@@ -1,24 +1,32 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-
+    <meta charset="UTF-8">
     <title>備品管理システム_ログインエラー</title>
-    
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <center>
-    <div class="container">
-        
-         <h2>ログインエラー</h2>
-         <p>ログインに失敗しました！</p>
-         <p id="message">ユーザー名またはパスワードが正しくありません。</p>
 
-       <form method="get" action="/login">
-        <button type="submit">ログイン画面に戻る</button>
-       </form>
-     
-    </div>     
-    </center>
-        
+    <!-- ヘッダー -->
+    <header>
+      <div class="header-container">
+        <h1>備品管理システム テスト</h1>
+        <form method="GET" action="/logout" class="logout-form">
+          <button type="submit">ログアウト</button>
+        </form>
+      </div>
+    </header>
+
+    <!-- メインコンテナ -->
+    <div class="container">
+        <h2>ログインエラー</h2>
+        <p class="item-info">ログインに失敗しました！</p>
+        <p class="item-info" id="message">ユーザー名またはパスワードが正しくありません。</p>
+
+        <form method="get" action="/login">
+            <button type="submit">ログイン画面に戻る</button>
+        </form>
+    </div>
+
 </body>
 </html>

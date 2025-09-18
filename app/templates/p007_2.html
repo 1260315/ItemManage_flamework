@@ -4,7 +4,7 @@
     内容    :   削除した備品情報を表示して、対象の備品を削除が完了したことを知らせる
     出力    :   検索一覧画面(/のGETメソッド)
 -->
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="ja">
     <head>
         <meta charset="UTF-8">
@@ -15,6 +15,7 @@
             <h1>備品管理システム テスト</h1>
         </header>
 
+        <center>
         <h2>備品情報の削除確定</h2>
         <h3>対象備品情報</h3>
 
@@ -34,4 +35,48 @@
         <form method="GET" action="/">
             <button type="submit" >検索画面に戻る</button>
         </form>
-    </body>
+        </center>
+    </body> -->
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>備品情報削除完了</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- ヘッダー -->
+    <header>
+      <div class="header-container">
+        <h1>備品管理システム テスト</h1>
+        <form method="GET" action="/logout" class="logout-form">
+          <button type="submit">ログアウト</button>
+        </form>
+      </div>
+    </header>
+
+    <div class="container">
+        <h2>備品情報削除完了</h2>
+
+        <div class="item-info">
+            <p>備品名: {{ item.name }}</p>
+            <p>カテゴリー: 
+                {% if item.categories %}
+                    {{ item.categories | map(attribute='name') | join(', ') }}
+                {% else %}
+                    未分類
+                {% endif %}
+            </p>
+            <p>登録者: {{ item.registrant_id }}</p>
+            <p>登録日: {{ item.created_at }}</p>
+            <p>備考: {{ item.remark }}</p>
+        </div>
+
+        <h3>削除が無事完了しました！</h3>
+        <form method="GET" action="/">
+            <button type="submit">検索画面に戻る</button>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,22 +1,32 @@
 <!DOCTYPE html>
 <html lang="ja">
-<head>
+    <head>
+        <meta charset="UTF-8">
+        <title>備品管理システム_利用者登録完了</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    </head>
+    <body>
 
-    <title>備品管理システム_利用者登録完了</title>
-    
-</head>
-<body>
-    <center>
-    <div class="container">
+        <!-- ヘッダー -->
+        <header>
+        <div class="header-container">
+            <h1>備品管理システム テスト</h1>
+            <form method="GET" action="/logout" class="logout-form">
+            <button type="submit">ログアウト</button>
+            </form>
+        </div>
         
-         <h2>利用者登録完了</h2>
-         <p>学籍番号 {{ studentID }} を登録できました。</p>
-       <form method="get" action="/home">
-        <button type="submit">業務一覧に戻る</button>
-       </form>
-     
-    </div>     
-    </center>
-        
-</body>
+        </header>
+
+        <!-- メインコンテナ -->
+        <div class="container">
+            <h2>利用者登録完了</h2>
+            <p class="item-info">学籍番号 {{ studentID }} を登録できました。</p>
+
+            <form method="get" action="/home">
+                <button type="submit">業務一覧に戻る</button>
+            </form>
+        </div>
+
+    </body>
 </html>

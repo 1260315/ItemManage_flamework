@@ -1,27 +1,40 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-
+    <meta charset="UTF-8">
     <title>備品管理システム_ホーム</title>
-    
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <center>
-    <div class="container">
-         <h1>備品管理システム</h1>
-         
-       <form method="post">
-         
 
-      <button type="submit" formaction="/items">備品一覧</button>
-      <button type="submit" formaction="/register">備品登録</button><br></br>
-      <button type="submit" formaction="/import">インポート</button>
-      <button type="submit" formaction="/export">エクスポート</button><br></br>
-      <button type="submit" formaction="/logout">ログアウト</button>
-     </form>
-     
-    </div>     
-    </center>
-        
+    <header>
+      <div class="header-container">
+        <h1>備品管理システム テスト</h1>
+        <form method="GET" action="/logout" class="logout-form">
+          <button type="submit">ログアウト</button>
+        </form>
+      </div>
+    </header>
+
+    <div class="container">
+        <h1>備品管理システム</h1>
+
+        <form method="post">
+            <div class="button-group">
+                <button type="submit" formaction="/items">備品一覧</button>
+                <button type="submit" formaction="/register">備品登録</button>
+            </div>
+
+            <div class="button-group">
+                <button type="submit" formaction="/import">インポート</button>
+                <button type="submit" formaction="/export">エクスポート</button>
+            </div>
+
+            <div class="button-group">
+                <button type="submit" formaction="/logout" class="btn-danger">ログアウト</button>
+            </div>
+        </form>
+    </div>
+
 </body>
 </html>

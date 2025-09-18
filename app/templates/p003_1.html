@@ -1,41 +1,52 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-
+    <meta charset="UTF-8">
     <title>備品管理システム_利用者登録</title>
-    
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <center>
+
+    <!-- ヘッダー -->
+    <header>
+      <div class="header-container">
+        <h1>備品管理システム テスト</h1>
+        <form method="GET" action="/logout" class="logout-form">
+          <button type="submit">ログアウト</button>
+        </form>
+      </div>
+    </header>
+
+    <!-- メインコンテナ -->
     <div class="container">
-         <h1>利用者登録</h1>
-       <form method="post" action="/register_user">
-         <label for="studentID">学籍番号:</label>
-         <input type="text" id="studentID" name="studentID" required><br><br>
+        <h1>利用者登録</h1>
 
-         <label for="password">パスワード:</label>
-         <input type="password" id="password" name="password" required><br><br>
+        <form method="post" action="/register_user">
+            <div class="form-group">
+                <label for="studentID">学籍番号:</label>
+                <input type="text" id="studentID" name="studentID" required>
+            </div>
 
-         
-        <p>・権限を選んでください</p>
+            <div class="form-group">
+                <label for="password">パスワード:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
 
-        <label>
-        <input type="radio" name="authority" value="0" required>
-          管理者(admin)
-        </label><br>
+            <div class="form-group">
+                <p>・権限を選んでください</p>
+                <label>
+                    <input type="radio" name="authority" value="0" required>
+                    管理者(admin)
+                </label><br>
+                <label>
+                    <input type="radio" name="authority" value="1">
+                    一般ユーザ
+                </label>
+            </div>
 
-        <label>
-        <input type="radio" name="authority" value="1" >
-          一般ユーザ
-        </label><br>
+            <button type="submit">登録</button>
+        </form>
+    </div>
 
-  
-
-        <button type="submit">登録</button>
-     </form>
-     
-    </div>     
-    </center>
-        
 </body>
 </html>
