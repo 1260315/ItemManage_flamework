@@ -3,6 +3,7 @@ user_seed.sql
 
 利用者データベースの初期化
 */
+SET NAMES 'utf8mb4';
 CREATE DATABASE IF NOT EXISTS user_db;
 
 USE user_db;

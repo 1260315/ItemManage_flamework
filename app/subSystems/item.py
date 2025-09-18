@@ -6,7 +6,7 @@ subSystems/item.py
 """
 import mysql.connector
 from flask import g
-
+import re
 def get_itemdb():
     if "item_db" not in g:
         g.item_db = mysql.connector.connect(
@@ -14,7 +14,8 @@ def get_itemdb():
             user="root",
             password="password",
             database="item_db",
-            autocommit=True
+            autocommit=True,
+            charset='utf8mb4'
         )
     print("item_dbとのコネクションを確立できました！")
 
@@ -67,7 +68,6 @@ class Category:
 #備品情報テーブルの操作==========================================
 
 class Item():
-
     @classmethod
     def get_all(cls):
         db = get_itemdb()
@@ -199,4 +199,64 @@ class Item():
             errors["remark"] = "備考は100文字以内で入力してください"
         
         return errors
+    
+    @classmethod
+    def sort(cls, order, ses):
+        if not ses['sortOrder'] or not order:
+            ses['sortOrder'] = "id"
+            ses['sortDIrection'] = True
+        if ses['sortOrder'] == order:
+            ses['sortDirection'] = not ses['sortDirection']
+        else:
+            ses['sortOrder'] = order
+            ses['sortDirection'] = True
+        return ses['sortOrder'], ses['sortDirection']
+    
+    @classmethod
+    def addOR(cls, value, fieldName):
+        if not value:
+            return None, []
+        conditions = []
+        params = []
+        orParts = []
+        if isinstance(value, str):
+            orParts = re.sub("[\u3000\t]", "", value).split("+")
+            for orPart in orParts:
+                andPart = [t for t in orPart.split() if t]
+                if andPart:
+                    conditions.append("(" + " and ".join([f"{fieldName} like %s" for _ in andPart]) + ")")
+                    params.extend([f"%{x}%" for x in andPart])
+        elif isinstance(value,(list,tuple)):
+            if len(value) > 0:
+                placeholders = ", ".join(["%s"] * len(value))
+                conditions.append(f" {fieldName} IN ({placeholders}) ")
+                params.extend(value)
+        condition = " or ".join(conditions)
+        return params, f" ({condition}) "
+    
+    @classmethod
+    def search(cls, values, ses):
+        commands=[]
+        params=[]
+        sql = """select items.id, any_value(items.name) as iname, any_value(items.created_at) as at, any_value(items.registrant_id) as reg,
+            GROUP_CONCAT(categories.name) as category_names, any_value(items.remark)
+            from items left join item_category on items.id = item_category.item_id 
+            left join categories on item_category.category_id = categories.id"""
+        for key, value in values:
+            if key is "category_id":
+                list, presql = cls.addOR(value, f"item_category.{key}")
+            else:
+                list, presql = cls.addOR(value, f"items.{key}")
+            if list:
+                commands.append(presql)
+                params.extend(list)
+        if commands:
+            sql += " where " + " and ".join(commands)
+    
+        sql += f" group by items.id order by {ses['sortOrder']} {"asc" if ses['sortDirection'] else "desc"}" 
+        db = get_itemdb()
+        cursor=db.cursor(dictionary=True)
+        cursor.execute(sql, params)
+        rows = cursor.fetchall()
+        return rows
 

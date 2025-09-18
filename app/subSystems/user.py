@@ -16,7 +16,8 @@ def get_userdb():
             user="root",
             password="password",
             database="user_db",
-            autocommit=True
+            autocommit=True,
+            charset='utf8mb4'
         )
 
     print("user_dbとのコネクションを確立できました！")
@@ -155,3 +156,14 @@ class User:
         elif len(password) < 6:
             errors["password"] = "パスワードは6文字以上で入力してください。"
         return errors
+    
+    @classmethod
+    def getAuthority(cls, studentID):
+        db =get_userdb()
+        cursor = db.cursor()
+        cursor.execute("select authority from users where studentID = %s", (studentID,))
+        userInfo = cursor.fetchone()
+        if userInfo:
+            return userInfo['authority']
+        else:
+            return None

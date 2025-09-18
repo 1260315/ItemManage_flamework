@@ -5,6 +5,7 @@ item_seed.sql
 */
 
 /*--備品情報データベース-----------------------------------*/
+SET NAMES 'utf8mb4';
 CREATE DATABASE IF NOT EXISTS item_db;
 
 USE item_db;

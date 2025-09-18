@@ -4,7 +4,7 @@ app.py
 共通受付システムを想定
 エンドポイントへのルーティングを定義する
 """
-from flask import Flask, render_template, request, redirect, url_for, session,send_file
+from flask import Flask, render_template, request, redirect, url_for, session, send_file
 import io
 import pandas as pd
 from subSystems.item import close_itemdb, Item, Category
@@ -103,7 +103,7 @@ def home():
     authority = session['authority']
     if authority == 0:
          return render_template('P001-2_home.html')
-    else:
+    elif authority == 1:
          return render_template('P001-3_home.html')
 
 #===================================================================
@@ -193,6 +193,41 @@ def export_items():
 def logout():
     session.clear()
    
+#備品検索
+@app.route('/items', methods=['GET', 'POST'])
+def search():
+    FIELDS = [("name","str"),
+          ("id","str"),
+          ("created_at","str"),
+          ("registrant_id","str"),
+          ("category_id","list")]
+    #session['authority'] = User.getAuthority(session['studentID'])
+    print(session['studentID'])
+    print(session['authority'])
+    if 'sortOrder' not in session:
+        session['sortOrder'] = "id"
+    if 'sortDirection' not in session:
+        session['sortDirection'] = True
+    commands = []
+    params = []
+    sql = """select items.id, items.name, items.created_at, items.registrant_id,
+            categories.name as category_id, items.remark 
+            from items join categories on items.category_id = categories.id """
+    
+    order = request.args.get("sort")
+    if order:       
+        session['sortOrder'], session['sortDirection'] = Item.sort(order,session)
+    values = []
+    for key, type in FIELDS:
+        if type == "str":    
+            values.append((key, request.args.get(key,"")))
+        elif type == "list":
+            #print('ok')
+            values.append((key, request.args.getlist(f"{key}[]")))
+
+    rows = Item.search(values,session)
+    #print(rows)
+    return render_template('P008.html',rows=rows)
     
 
 ### ===== アプリ実行 ===== ###
