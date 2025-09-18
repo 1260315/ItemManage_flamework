@@ -29,6 +29,9 @@ def test():
     # 備品情報クエリ取得
     items = Item.get_all()
 
+    from werkzeug.security import generate_password_hash
+    print(generate_password_hash("password123"))
+
     return render_template("test.html", items = items, categories = categories)
 
 #===================================================================
