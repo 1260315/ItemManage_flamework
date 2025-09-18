@@ -202,9 +202,11 @@ class Item():
     
     @classmethod
     def sort(cls, order, ses):
+        allowed_columns = ['id','name','created_at','registrant_id','category_id']
+        if order not in allowed_columns:
+            order = 'id'
         if not ses['sortOrder'] or not order:
-            ses['sortOrder'] = "id"
-            ses['sortDIrection'] = True
+            ses['sortDirection'] = True
         if ses['sortOrder'] == order:
             ses['sortDirection'] = not ses['sortDirection']
         else:

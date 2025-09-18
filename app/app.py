@@ -9,11 +9,15 @@ import io
 import pandas as pd
 from subSystems.item import close_itemdb, Item, Category
 from subSystems.user import close_userdb, User
+from flask_wtf import CSRFProtect
+import hashlib
 
+app = Flask(__name__)
 # Flaskアプリ初期化
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
-app.secret_key = " im_secret_key "
+app.secret_key = "e515d0d63d0f6821ddec6bf61af081e91dacf627b4e852496d54bfba5755af5c"
+#csrf = CSRFProtect(app)
 #app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=1)
 
 app.teardown_appcontext(close_itemdb)
@@ -80,7 +84,7 @@ def edit_item():
 @app.route('/delete_item', methods=['GET','POST'])
 def delete_item():
     if request.method == 'GET':
-        delete_id = request.args.get("id")
+        delete_id = request.args.get("del")
         delete_item = Item.refer(delete_id)
         if not delete_item:
             print("error:route = /delete_item, mesthod=GET")
@@ -88,7 +92,7 @@ def delete_item():
         return render_template("p007_1.html", item=delete_item)
 
     elif request.method == 'POST':
-        id = request.form["id"]
+        id = request.form["del"]
         delete_item = Item.delete(id)
         if not delete_item:
             print("error:route = /delete_item, mesthod=POST")

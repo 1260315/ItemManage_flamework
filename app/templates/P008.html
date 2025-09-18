@@ -53,7 +53,7 @@
         <tr>
             {% for key, value in row.items() %}
             <td>
-                {{value}}
+                {{ value }}
             </td>
             {% endfor %}
             <td>
@@ -63,7 +63,7 @@
             <td>
                 {% if session.studentID|string == row.reg|string or session.authority == 0 %}
                 <form method="POST" action="/delete_item" style="display: inline;">
-                <button type="submit" name="in" value="{{row.id}}">削除</button>
+                <button type="submit" name="del" value="{{row.id}}">削除</button>
                 </form>
                 {% else %}
                 {% endif %}
