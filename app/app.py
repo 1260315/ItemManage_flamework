@@ -307,7 +307,7 @@ def search():
 
     rows = Item.search(values,session)
     categories = Category.get_all()
-    return render_template('P008.html',rows=rows, categories=categories)
+    return render_template('p008.html',rows=rows, categories=categories)
 ### ===== アプリ実行 ===== ###
 if __name__ == "__main__":
 
