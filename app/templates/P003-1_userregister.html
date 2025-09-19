@@ -9,12 +9,19 @@
     <center>
     <div class="container">
          <h1>利用者登録</h1>
-       <form method="post" action="/register_user">
+       <form method="post" action="/register_user" autocomplete="off"novalidate>
          <label for="studentID">学籍番号:</label>
-         <input type="text" id="studentID" name="studentID" required><br><br>
+         {% if errors %}
+        {{errors.studentID | default('')}}<br>
+        {% endif %}
+         <input type="text" id="studentID" name="studentID" value="" autocomplete="off"required><br><br>
+
 
          <label for="password">パスワード:</label>
-         <input type="password" id="password" name="password" required><br><br>
+         {% if errors %}
+        {{errors.password | default('')}}<br>
+        {% endif %}
+         <input type="password" id="password" name="password" value="" autocomplete="new-password"required><br><br>
 
          
         <p>・権限を選んでください</p>
@@ -25,10 +32,13 @@
         </label><br>
 
         <label>
-        <input type="radio" name="authority" value="1" >
+        <input type="radio" name="authority" value="1" required>
           一般ユーザ
         </label><br>
-
+        
+        {% if errors %}
+        {{errors.authority | default('')}}<br>
+        {% endif %}
   
 
         <button type="submit">登録</button>

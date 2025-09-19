@@ -10,12 +10,12 @@
     <div class="container">
          <h1>備品管理システム</h1>
          <h2>ログイン</h2>
-       <form method="post" action="/login">
+       <form method="post" action="/login" autocomplete="off">
          <label for="studentID">学籍番号:</label>
-         <input type="text" id="studentID" name="studentID" required><br><br>
+         <input type="text" id="studentID" name="studentID" value="" autocomplete="off" required><br><br>
 
          <label for="password">パスワード:</label>
-         <input type="password" id="password" name="password" required><br><br>
+         <input type="password" id="password" name="password" value="" autocomplete="new-password" required><br><br>
 
       <button type="submit">ログイン</button>
      </form>

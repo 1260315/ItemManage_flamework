@@ -16,7 +16,7 @@ DROP TABLE IF EXISTS users;
 CREATE TABLE IF NOT EXISTS users (
     studentID VARCHAR(20) NOT NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL,
-    authority TINYINT(1) NOT NULL DEFAULT 1 , -- 0=管理者 / 1=一般ユーザ
+    authority TINYINT(1) NOT NULL DEFAULT -1 , -- 0=管理者 / 1=一般ユーザ
     deadoralive TINYINT(1) NOT NULL DEFAULT 1 -- 0=死亡 / 1=生存
 );
 

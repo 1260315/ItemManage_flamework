@@ -110,29 +110,32 @@ def home():
 #利用者登録
 @app.route('/register_user', methods=['GET','POST'])
 def register_user():
-    if request.method == 'GET':
-        return render_template("P003-1_userregister.html", errors=[])
-    else:
+    if request.method == 'POST':
+        #authority = -1
         studentID = request.form['studentID']
         password = request.form['password']
-        #authority = request.form.get('authority', 1)  #権限は絶対入力
-        authority = request.form['authority']
+        authority = request.form.get('authority')
+
+
+        print(authority)
 
         #入力値チェック
-        errors = User.check(studentID, password)
+        errors = User.check(studentID, password,authority)
         if errors:
-            return render_template("P003-2_userregistererror.html", errors=errors)
+            return render_template("P003-1_userregister.html", errors=errors)
         
         #既に登録された学籍番号でないかチェック
-        """
-        existing_user = User.query.filter_by(studentID=studentID).first()
-        if existing_user:
-            errors = [f"学籍番号 {studentID} は既に登録されています"]
-            return render_template("P003-2_userregistererror.html", errors=errors)
-        """
+        if User.exists(studentID):
+            errors=[f"学籍番号 {studentID} は既に登録されています"]
+            return render_template("P003-2_userregistererror.html",errors=errors)
+        
+        
         #登録
         User.insert(studentID, password, authority)
         return render_template("P003-3_userregistercomplate.html",studentID=studentID)     
+
+    else:
+        return render_template('P003-1_userregister.html')
     
 #===================================================================
 #ログイン
@@ -212,6 +215,8 @@ def export_check():
         as_attachment=True,
         download_name='items.csv'
      )  
+
+     return render_template("P009-2_exportcomplate.html")     
 #===================================================================
 #===================================================================
 # ログアウト
