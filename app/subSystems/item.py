@@ -225,12 +225,10 @@ class Item():
     
     @classmethod
     def import_from_file(cls, filepath):
-
-
         if not filepath.endswith(".csv"):
             return False, "CSVファイルではありません"
 
-        # 🚨 列数の一貫性チェック（csv.reader でクォートも正しく解釈）
+        # 列数の一貫性チェック（csv.reader でクォートも正しく解釈）
         with open(filepath, "r", encoding="utf-8") as f:
             reader = csv.reader(f)
             lines = list(reader)
@@ -243,7 +241,7 @@ class Item():
             if len(row) != expected_cols:
                 return False, "CSVに余分なカンマがあります"
 
-        # 🚨 pandasで読み込み
+        # pandasで読み込み
         try:
             df = pd.read_csv(filepath, encoding="utf-8")
         except EmptyDataError:
@@ -252,7 +250,7 @@ class Item():
         if df.empty:
             return False, "CSVファイルにデータがありません"
 
-        # 🚨 カラムチェック（順序も含めて一致必須）
+        # カラムチェック（順序も含めて一致必須）
         required_cols = ["name", "remark", "category_ids"]
         if list(df.columns) != required_cols:
             return False, f"CSVのカラムが不正です。必須カラムは {required_cols} です。実際: {list(df.columns)}"
@@ -269,13 +267,13 @@ class Item():
                 remark = None if pd.isna(row['remark']) else str(row['remark']).strip()
                 category_raw = None if pd.isna(row['category_ids']) else str(row['category_ids']).strip()
 
-                # 🚨 必須チェック
+                # 必須チェック
                 if not name:
                     return False, "備品名(name) が空です"
                 if not category_raw:
                     return False, "カテゴリ(category_ids) が空です"
 
-                # 🚨 整数・範囲チェック
+                # 整数・範囲チェック
                 try:
                     category_ids = [int(cid) for cid in category_raw.split(',')]
                 except ValueError:
@@ -285,14 +283,14 @@ class Item():
                     if cid < 1 or cid > 6:
                         return False, f"カテゴリID {cid} が範囲外です (1〜6 のみ有効)"
 
-                # ✅ items 登録
+                # items 登録
                 cursor.execute(
                     "INSERT INTO items (name, registrant_id, remark) VALUES (%s, %s, %s)",
                     (name, registrant_id, remark)
                 )
                 item_id = cursor.lastrowid
 
-                # ✅ categories 登録
+                # categories 登録
                 for cid in category_ids:
                     cursor.execute(
                         "INSERT INTO item_category (item_id, category_id) VALUES (%s, %s)",
