@@ -214,7 +214,7 @@ class Item():
     @classmethod
     def addOR(cls, value, fieldName):
         if not value:
-            return None, []
+            return [], []
         conditions = []
         params = []
         orParts = []
@@ -242,17 +242,19 @@ class Item():
             from items left join item_category on items.id = item_category.item_id 
             left join categories on item_category.category_id = categories.id"""
         for key, value in values:
-            if key is "category_id":
-                list, presql = cls.addOR(value, f"item_category.{key}")
+            if key == "category_id":
+                prelist, presql = cls.addOR(value, f"item_category.{key}")
             else:
-                list, presql = cls.addOR(value, f"items.{key}")
-            if list:
+                prelist, presql = cls.addOR(value, f"items.{key}")
+            if prelist:
                 commands.append(presql)
-                params.extend(list)
+                params.extend(prelist)
         if commands:
             sql += " where " + " and ".join(commands)
-    
-        sql += f" group by items.id order by {ses['sortOrder']} {"asc" if ses['sortDirection'] else "desc"}" 
+        allowed_columns = ['items.id','items.name','items.created_at','items.registrant_id','items.category_id']
+        order = ses['sortOrder'] if ses['sortOrder'] in allowed_columns  else 'items.id'
+        dir = "asc" if ses['sortDirection'] else "desc"
+        sql += f" group by items.id order by {order} {dir}"
         db = get_itemdb()
         cursor=db.cursor(dictionary=True)
         cursor.execute(sql, params)
