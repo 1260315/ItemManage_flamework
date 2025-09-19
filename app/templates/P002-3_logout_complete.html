@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>P002-3 ログアウト完了画面</title>
+</head>
+<body>
+    <h1>ログアウト完了</h1>
+    <p>ログアウトが完了しました。</p>
+    <p>このタブを閉じて終了してください。</p>
+
+    <form action="{{ url_for('login') }}" method="GET">
+        <button type="submit">再度ログインする</button>
+    </form>
+</body>
+</html>

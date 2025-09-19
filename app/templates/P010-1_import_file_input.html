@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>P010-1 ファイル入力画面</title>
+</head>
+<body>
+    <h1>P010-1ファイル情報入力</h1>
+    <p>※ファイル形式は csv 形式に限ります<br>
+    
+
+    </p>
+
+    <!-- アップロードフォーム -->
+    <form action="{{ url_for('import_items') }}" method="POST" enctype="multipart/form-data">
+        <input type="file" name="file" accept=".csv" required multiple>
+        <br><br>
+        <button type="submit">ここをクリックして入力</button>
+    </form>
+
+    <form action="{{ url_for('home') }}" method="GET">
+        <button type="submit">ホームへ戻る</button>
+    </form>
+</body>
+</html>

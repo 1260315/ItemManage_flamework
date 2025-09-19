@@ -6,6 +6,8 @@ subSystems/item.py
 """
 import mysql.connector
 from flask import g
+import pandas as pd
+
 
 def get_itemdb():
     if "item_db" not in g:
@@ -75,8 +77,8 @@ class Item():
 
         cursor.execute("""
             SELECT i.id, i.name, i.remark, i.registrant_id, i.created_at,
-                   GROUP_CONCAT(c.id) AS category_ids,
-                   GROUP_CONCAT(c.name) AS category_names
+            GROUP_CONCAT(c.id) AS category_ids,
+            GROUP_CONCAT(c.name) AS category_names
             FROM items i
             LEFT JOIN item_category ic ON i.id = ic.item_id
             LEFT JOIN categories c ON ic.category_id = c.id
@@ -102,8 +104,8 @@ class Item():
         cursor = db.cursor(dictionary=True)
         cursor.execute("""
             SELECT i.id, i.name, i.remark, i.registrant_id, i.created_at,
-                   GROUP_CONCAT(c.id) AS category_ids,
-                   GROUP_CONCAT(c.name) AS category_names
+            GROUP_CONCAT(c.id) AS category_ids,
+            GROUP_CONCAT(c.name) AS category_names
             FROM items i
             LEFT JOIN item_category ic ON i.id = ic.item_id
             LEFT JOIN categories c ON ic.category_id = c.id
@@ -199,4 +201,75 @@ class Item():
             errors["remark"] = "備考は100文字以内で入力してください"
         
         return errors
+    # TODO: ==========================================================================
+    
+
+    @classmethod
+    def clear_all(cls):
+        """備品データを全削除し、AUTO_INCREMENTをリセット"""
+        db = get_itemdb()
+        cursor = db.cursor()
+
+        # 備品データを全削除
+        cursor.execute("DELETE FROM item_category")
+        cursor.execute("DELETE FROM items")
+
+        # AUTO_INCREMENT(自動で連番を振る仕組み)をリセットし１から始める
+        cursor.execute("ALTER TABLE item_category AUTO_INCREMENT = 1")
+        cursor.execute("ALTER TABLE items AUTO_INCREMENT = 1")
+
+        db.commit()
+        cursor.close()
+
+    
+    @classmethod
+    def import_from_file(cls, filepath):
+        if not filepath.endswith(".csv"):
+            print(f"Skipped non-csv file: {filepath}")
+            return False, []
+
+        db = get_itemdb()
+        cursor = db.cursor()
+        imported_items = []
+        try:
+            df = pd.read_csv(filepath, encoding="utf-8")
+
+            for _, row in df.iterrows():
+                name = None if pd.isna(row['name']) else row['name']
+                registrant_id = None if pd.isna(row['registrant_id']) else int(row['registrant_id'])
+                remark = None if pd.isna(row['remark']) else row['remark']
+
+                cursor.execute(
+                    "INSERT INTO items (name, registrant_id, remark) VALUES (%s, %s, %s)",
+                    (name, registrant_id, remark)
+                )
+                item_id = cursor.lastrowid
+
+                categories = []
+                if 'category_ids' in row and not pd.isna(row['category_ids']):
+                    category_ids = [int(cid) for cid in str(row['category_ids']).split(',')]
+                    for cid in category_ids:
+                        cursor.execute(
+                            "INSERT INTO item_category (item_id, category_id) VALUES (%s, %s)",
+                            (item_id, cid)
+                        )
+                        categories.append(cid)
+
+                imported_items.append({
+                    "id": item_id,
+                    "name": name,
+                    "remark": remark,
+                    "registrant_id": registrant_id,
+                    "created_at": pd.Timestamp.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    "categories": categories
+                })
+
+            db.commit()
+            cursor.close()
+            return True, imported_items
+        except Exception as e:
+            db.rollback()
+            cursor.close()
+            print(f"Import failed for {filepath}: {e}")
+            return False, []
 

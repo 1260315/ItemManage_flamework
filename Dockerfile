@@ -12,6 +12,8 @@ RUN apt-get update && apt-get install -y \
 
 # ローカルのrequirements.txtをコンテナにコピー
 COPY requirements.txt .
+COPY --chmod=644 my.cnf /etc/mysql/conf.d/my.cnf
+
 # config周りをコンテナにコピー(start.sh、gunicorn_config.py)
 # これは本番環境用なので、開発時には使わない
 

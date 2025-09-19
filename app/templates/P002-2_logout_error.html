@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>P002-2 ログアウトエラー画面</title>
+</head>
+<body>
+    <h1>ログアウトエラー</h1>
+    <p>ログアウト処理中にエラーが発生しました。</p>
+
+    <!-- 確認画面へ戻る -->
+    <form action="{{ url_for('logout') }}" method="GET">
+        <button type="submit">ログアウト確認画面へ戻る</button>
+    </form>
+
+    <!-- ホームへ戻る -->
+    <p><a href="{{ url_for('home') }}">ホームへ戻る</a></p>
+</body>
+</html>

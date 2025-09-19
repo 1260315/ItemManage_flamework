@@ -17,12 +17,14 @@ services:
     image: mysql:8.0
     environment:
       MYSQL_ROOT_PASSWORD: password
+      TZ: Asia/Tokyo
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     ports:
       - "3306:3306"
     volumes:
       - db_data_prod:/var/lib/mysql
       - ./init:/docker-entrypoint-initdb.d  # 初期化スクリプトをマウント(DBの新規作成)
+      - ./my.cnf:/etc/mysql/my.cnf:ro
     networks:
       - external
 
@@ -37,4 +39,3 @@ volumes:
 networks:
   external:
     driver: bridge
-

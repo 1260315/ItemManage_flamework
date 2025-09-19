@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>P010-3 インポート確認画面</title>
+</head>
+<body>
+    <h1>インポート確認</h1>
+
+    <p>以下のファイルをインポートします。</p>
+    <ul>
+        {% for file in filenames %}
+            <li>{{ file }}</li>
+        {% endfor %}
+    </ul>
+
+    <form action="{{ url_for('import_items') }}" method="POST">
+        <input type="hidden" name="action" value="confirm">
+        {% for file in filepaths %}
+            <input type="hidden" name="filepaths" value="{{ file }}">
+        {% endfor %}
+        <button type="submit">インポートを実行する</button>
+    </form>
+
+    <form action="{{ url_for('import_items') }}" method="GET">
+        <button type="submit">キャンセル</button>
+    </form>
+</body>
+</html>

@@ -9,17 +9,21 @@
     <div class="container">
          <h1>備品管理システム</h1>
          
-       <form method="post">
+     <form method="post">
          
 
       <button type="submit" formaction="/items">備品一覧</button>
-      <button type="submit" formaction="/register">備品登録</button><br></br>
-      <button type="submit" formaction="/import">インポート</button>
+      <button type="submit" formaction="/register">備品登録</button><br></br>      
       <button type="submit" formaction="/export">エクスポート</button><br></br>
       <button type="submit" formaction="/">利用者登録</button>
-      <button type="submit" formaction="/">利用者削除</button><br></br>
+      </form>
+      <form method="get">
       <button type="submit" formaction="/logout">ログアウト</button>
-     </form>
+      <button type="submit" formaction="/delete_userdata">利用者削除</button><br></br><!--"/delete_userdata"を追加-->
+      <button type="submit" formaction="/import_items">インポート</button>
+      </form>
+      
+     
      
     </div>     
     </center>
