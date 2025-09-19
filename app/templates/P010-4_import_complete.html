@@ -2,13 +2,13 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>P010-5 入力完了画面</title>
+    <title>P010-4 入力完了画面</title>
 </head>
 <body>
-    <h1>P010-5 入力結果</h1>
+    <h1>P010-4 入力結果</h1>
 
     {% if success_files %}
-        <p>以下のファイルの備品情報の登録に成功しました。</p>
+        <p>以下のファイルの備品情報の登録に成功しました！</p>
         <ul>
             {% for file in success_files %}
                 <li>{{ file }}</li>
@@ -38,7 +38,7 @@
 
 
     {% if failed_files %}
-        <p>以下のファイルの備品情報の登録に失敗しました。</p>
+        <p>以下のファイルの備品情報の登録に失敗しました………</p>
         <ul>
             {% for file in failed_files %}
                 <li>{{ file }}</li>

@@ -5,11 +5,8 @@
     <title>P010-1 ファイル入力画面</title>
 </head>
 <body>
-    <h1>P010-1ファイル情報入力</h1>
-    <p>※ファイル形式は csv 形式に限ります<br>
-    
-
-    </p>
+    <h1>P010-1 ファイル情報入力</h1>
+    <p>※ファイル形式は csv 形式に限ります</p>
 
     <!-- アップロードフォーム -->
     <form action="{{ url_for('import_items') }}" method="POST" enctype="multipart/form-data">
@@ -21,5 +18,45 @@
     <form action="{{ url_for('home') }}" method="GET">
         <button type="submit">ホームへ戻る</button>
     </form>
+    <hr>
+    <h2>入力例（CSV形式）</h2>
+    <table border="1" cellpadding="8">
+        <tr>
+            <th>name, remark, category_ids</th>
+        </tr>
+        <tr>
+            <td>ノートPC, 研究室用, "1,2"</td>
+        </tr>
+        <tr>
+            <td>モニター, 24インチディスプレイ, 2</td>
+        </tr>
+        <tr>
+            <td>キーボード, 無線タイプ, 3</td>
+        </tr>
+        <tr>
+            <td>マウス, , 3</td>
+        </tr>
+        <tr>
+            <td>プリンタ, 共有プリンタ, "1,4"</td>
+        </tr>
+    </table>
+    nameとcategory_idsは必須です。remark部分は入力例のように入力しなくてもかまいません。
+    <h2>カテゴリID対応表</h2>
+    <table border="1" cellpadding="8">
+        <tr>
+            <th>カテゴリID</th>
+            <th>カテゴリ名</th>
+        </tr>
+        <tr><td>1</td><td>PC</td></tr>
+        <tr><td>2</td><td>モニター</td></tr>
+        <tr><td>3</td><td>マウス</td></tr>
+        <tr><td>4</td><td>キーボード</td></tr>
+        <tr><td>5</td><td>プリンタ</td></tr>
+        <tr><td>6</td><td>その他</td></tr>
+    </table>
+    
+    <p>CSVの <code>category_ids</code> 列には上記1～6までのIDを入力してください。<br>
+    複数カテゴリを指定する場合は <code>"1,3"</code> のようにカンマ区切りで入力してください。</p>
+    
 </body>
 </html>

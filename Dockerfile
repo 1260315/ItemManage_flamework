@@ -12,7 +12,6 @@ RUN apt-get update && apt-get install -y \
 
 # ローカルのrequirements.txtをコンテナにコピー
 COPY requirements.txt .
-COPY --chmod=644 my.cnf /etc/mysql/conf.d/my.cnf
 
 # config周りをコンテナにコピー(start.sh、gunicorn_config.py)
 # これは本番環境用なので、開発時には使わない
@@ -25,3 +24,5 @@ COPY /app/ .
 RUN chmod 755 ./gunicorn_setting/start.sh
 
 # CMD ["gunicorn", "-c", "gunicorn.conf.py", "app.main:app"]
+
+

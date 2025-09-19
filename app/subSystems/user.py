@@ -118,6 +118,14 @@ class User:
     #     cursor.execute("DELETE FROM users WHERE id=%s", (uid,))
     #     cursor.close()
     #     db.commit()
+    @staticmethod
+    def exists(studentID):
+        db = get_userdb()
+        cursor = db.cursor()
+        cursor.execute("SELECT * FROM users WHERE studentID = %s", (studentID,))
+        result = cursor.fetchone()
+        cursor.close()
+        return result is not None
 
     @classmethod
     def authenticate(cls, studentID, password):
@@ -143,7 +151,7 @@ class User:
             return None
 
     @classmethod
-    def check(cls, studentID, password):
+    def check(cls, studentID, password,authority):
         """入力チェック"""
         errors = {}
         if not studentID:
@@ -154,6 +162,9 @@ class User:
             errors["password"] = "パスワードは必須です。"
         elif len(password) < 6:
             errors["password"] = "パスワードは6文字以上で入力してください。"
+        if  authority is None:
+            print("ああああああああああああ")
+            errors["authority"] = "権限の選択は必須です。"
         return errors
     
     # TODO:

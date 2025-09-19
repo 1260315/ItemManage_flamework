@@ -2,24 +2,37 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>P010-3 インポート確認画面</title>
+    <title>P010-3 インポート確認</title>
 </head>
 <body>
     <h1>インポート確認</h1>
+    <p>以下のデータをインポートします。よろしいですか？</p>
 
-    <p>以下のファイルをインポートします。</p>
-    <ul>
-        {% for file in filenames %}
-            <li>{{ file }}</li>
-        {% endfor %}
-    </ul>
+    {% for file in preview_data %}
+        <h2>{{ file.filename }}</h2>
+        <table border="1">
+            <tr>
+                {% for key in file.rows[0].keys() %}
+                    <th>{{ key }}</th>
+                {% endfor %}
+            </tr>
+            {% for row in file.rows %}
+            <tr>
+                {% for value in row.values() %}
+                    <td>{{ value }}</td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </table>
+        <br>
+    {% endfor %}
 
     <form action="{{ url_for('import_items') }}" method="POST">
-        <input type="hidden" name="action" value="confirm">
-        {% for file in filepaths %}
-            <input type="hidden" name="filepaths" value="{{ file }}">
+        <input type="hidden" name="step" value="commit">
+        {% for p in temp_paths %}
+            <input type="hidden" name="temp_paths" value="{{ p }}">
         {% endfor %}
-        <button type="submit">インポートを実行する</button>
+        <button type="submit">インポート実行</button>
     </form>
 
     <form action="{{ url_for('import_items') }}" method="GET">

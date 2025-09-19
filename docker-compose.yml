@@ -1,8 +1,10 @@
 services:
   web:  # Flaskアプリケーション
-    build: .  # Dockerfileからビルド
+    build:   # Dockerfileからビルド(Web用)
+      context: .
+      dockerfile: Dockerfile 
     ports:
-      - "5000:5000"  # ホストの5001をコンテナの5000にマッピング
+      - "5000:5000"  # ホストの5000をコンテナの5000にマッピング
     volumes:
       - ./app:/app
     depends_on:
@@ -15,6 +17,10 @@ services:
 
   db:
     image: mysql:8.0
+    build:
+      context: .
+      dockerfile: db.Dockerfile # db.Dockerfile からビルド(MySQL用) SQL上の文字化け対策
+    
     environment:
       MYSQL_ROOT_PASSWORD: password
       TZ: Asia/Tokyo
@@ -24,7 +30,6 @@ services:
     volumes:
       - db_data_prod:/var/lib/mysql
       - ./init:/docker-entrypoint-initdb.d  # 初期化スクリプトをマウント(DBの新規作成)
-      - ./my.cnf:/etc/mysql/my.cnf:ro
     networks:
       - external
 
