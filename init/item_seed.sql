@@ -44,8 +44,8 @@ INSERT INTO categories (name) VALUES
 
 
 INSERT INTO items (name, registrant_id, remark) VALUES
-("パソコン一式", 1260315, "ケーブルもあるよ!");
-
+("パソコン一式", 1260315, "ケーブルもあるよ!"),("some", 1280371, null),("any", 1280370, "aaaa"),("any", 9999999, null);
 
 INSERT INTO item_category (item_id, category_id) VALUES
-(1,1),(1,2),(1,3),(1,4),(1,5);
+(1,1),(1,2),(1,3),(1,4),(1,5),(2,6),(3,1),(3,2),(3,3),(3,4),(3,5),(3,6),(4,6);
+

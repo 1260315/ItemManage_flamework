@@ -39,10 +39,10 @@
         {% if rows %}
         <table id="ages" border="1" style="margin-left: auto; margin-right: auto;">
         <tr>
-            <th>備品ID <button class="sortBtn" style="width: 1.5em; height: 1.5em; text-align: center;padding: 0;" type="button" data-sort="id" >{%if session.sortOrder != "id"%} {% elif session.sortDirection%}▼{% else %}▲{% endif %}</button></th>
-            <th>備品名 <button class="sortBtn" style="width: 1.5em; height: 1.5em; text-align: center;padding: 0;" type="button" data-sort="name" >{%if session.sortOrder != "name" %} {% elif session.sortDirection%}▼{% else %}▲{% endif %}</button></th>
-            <th>登録日 <button class="sortBtn" style="width: 1.5em; height: 1.5em; text-align: center;padding: 0;" type="button" data-sort="created_at" >{%if session.sortOrder != "created_at" %} {% elif session.sortDirection%}▼{% else %}▲{% endif %}</button></th>
-            <th>登録者 <button class="sortBtn" style="width: 1.5em; height: 1.5em; text-align: center;padding: 0;" type="button" data-sort="registrant_id" >{%if session.sortOrder != "registrant_id" %} {% elif session.sortDirection%}▼{% else %}▲{% endif %}</button></th>
+            <th>備品ID <button class="sortBtn" style="width: 1.5em; height: 1.5em; text-align: center;padding: 0;" type="button" data-sort="items.id" >{%if session.sortOrder != "items.id"%} {% elif session.sortDirection%}▼{% else %}▲{% endif %}</button></th>
+            <th>備品名 <button class="sortBtn" style="width: 1.5em; height: 1.5em; text-align: center;padding: 0;" type="button" data-sort="items.name" >{%if session.sortOrder != "items.name" %} {% elif session.sortDirection%}▼{% else %}▲{% endif %}</button></th>
+            <th>登録日 <button class="sortBtn" style="width: 1.5em; height: 1.5em; text-align: center;padding: 0;" type="button" data-sort="items.created_at" >{%if session.sortOrder != "items.created_at" %} {% elif session.sortDirection%}▼{% else %}▲{% endif %}</button></th>
+            <th>登録者 <button class="sortBtn" style="width: 1.5em; height: 1.5em; text-align: center;padding: 0;" type="button" data-sort="items.registrant_id" >{%if session.sortOrder != "items.registrant_id" %} {% elif session.sortDirection%}▼{% else %}▲{% endif %}</button></th>
             <th>カテゴリ <!--<button class="sortBtn" style="width: 1.5em; height: 1.5em; text-align: center;padding: 0;" type="button" data-sort="category_id">{%if session.sortOrder != "category_id" %} {% elif session.sortDirection%}▼{% else %}▲{% endif %}</button>--></th>
             <th>備考</th>
             <th>編集</th>
@@ -62,7 +62,7 @@
             </td>
             <td>
                 {% if session.studentID|string == row.reg|string or session.authority == 0 %}
-                <form method="POST" action="/delete_item" style="display: inline;">
+                <form method="get" action="/delete_item" style="display: inline;">
                 <button type="submit" name="del" value="{{row.id}}">削除</button>
                 </form>
                 {% else %}
@@ -83,7 +83,7 @@ document.querySelectorAll('.sortBtn').forEach(btn => {
         const form = document.getElementById("searchForm");
         const params = new URLSearchParams(new FormData(form));
         params.set('sort', btn.dataset.sort);
-        window.location.href = "/search" + "?" + params.toString();
+        window.location.href = "/items" + "?" + params.toString();
     });
 });
 </script>

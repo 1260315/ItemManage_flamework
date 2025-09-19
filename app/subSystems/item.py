@@ -202,9 +202,9 @@ class Item():
     
     @classmethod
     def sort(cls, order, ses):
-        allowed_columns = ['id','name','created_at','registrant_id','category_id']
+        allowed_columns = ['items.id','items.name','items.created_at','items.registrant_id','items.category_id']
         if order not in allowed_columns:
-            order = 'id'
+            order = 'items.id'
         if not ses['sortOrder'] or not order:
             ses['sortDirection'] = True
         if ses['sortOrder'] == order:
@@ -231,7 +231,7 @@ class Item():
         elif isinstance(value,(list,tuple)):
             if len(value) > 0:
                 placeholders = ", ".join(["%s"] * len(value))
-                conditions.append(f" {fieldName} IN ({placeholders}) ")
+                conditions.append(f"exists ( select 1 from item_category where {fieldName} IN ({placeholders}) and items.id = item_category.item_id) ")
                 params.extend(value)
         condition = " or ".join(conditions)
         return params, f" ({condition}) "
