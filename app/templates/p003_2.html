@@ -7,33 +7,24 @@
 </head>
 <body>
 
-    <!-- ヘッダー -->
-    <header>
-      <div class="header-container">
-        <h1>備品管理システム テスト</h1>
-        <form method="GET" action="/logout" class="logout-form">
-          <button type="submit">ログアウト</button>
-        </form>
-      </div>
-    </header>
+    <!-- ヘッダーをインクルード -->
+    {% include 'header.html' %}
 
     <!-- メインコンテナ -->
     <div class="container">
         <h2>登録エラー</h2>
-        <p class="item-info">利用者登録に失敗しました！</p>
+        <p class="error">利用者登録に失敗しました！</p>
 
-        <!-- エラーメッセージ表示 -->
         {% if errors %}
-            <ul class="error">
-            {% for error in errors %}
-                <li>{{ error }}</li>
-            {% endfor %}
-            </ul>
+          <span class="error">{{ errors | default('') }}</span>
         {% endif %}
 
-        <form method="get" action="/userregister">
-            <button type="submit">利用者登録画面に戻る</button>
-        </form>
+        <div class="button-group">
+            <form method="get" action="/register_user">
+                <button type="submit">利用者登録画面に戻る</button>
+            </form>
+            <button type="button" class="cancel-btn" onclick="window.location.href='/home'">業務一覧に戻る</button>
+        </div>
     </div>
 
 </body>

@@ -7,15 +7,8 @@
 </head>
 <body>
 
-    <!-- ヘッダー -->
-    <header>
-      <div class="header-container">
-        <h1>備品管理システム テスト</h1>
-        <form method="GET" action="/logout" class="logout-form">
-          <button type="submit">ログアウト</button>
-        </form>
-      </div>
-    </header>
+    <!-- ヘッダーをインクルード -->
+    {% include 'header.html' %}
 
     <!-- メインコンテナ -->
     <div class="container">
@@ -24,19 +17,14 @@
         <form action="/add_item" method="POST">
             <!-- 備品名 -->
             <div class="form-group">
-                <label>備品名:</label>
-                <input type="text" name="name" maxlength="50" required>
+                <label for="name">備品名:</label>
+                <input type="text" id="name" name="name" maxlength="50" required>
             </div>
 
-            <!-- 登録者ID -->
-            <div class="form-group">
-                <label>登録者ID:</label>
-                <input type="number" name="registrant_id" required>
-            </div>
 
             <!-- カテゴリー -->
-            <div class="form-group">
-                <fieldset>
+            <div class="form-group" >
+                <fieldset >
                     <legend>カテゴリー:</legend>
                     <div class="categories">
                         {% for category in categories %}
@@ -51,22 +39,25 @@
 
             <!-- 備考 -->
             <div class="form-group">
-                <label>備考:</label>
-                <textarea name="remark" class="remarks-input"></textarea>
+                <label for="remark">備考:</label>
+                <textarea id="remark" name="remark" class="remarks-input"></textarea>
             </div>
 
-            <!-- 登録ボタン -->
-            <button type="submit">登録</button>
+            <!-- ボタングループ -->
+            <div class="button-group">
+                <button type="submit">登録</button>
+                <button type="reset" class="cancel-btn">リセット</button>
+            </div>
         </form>
 
         <!-- 登録結果表示 -->
         {% if result %}
             <div class="item-info">
-                {{result.id | default('未登録')}}<br>
-                {{result.name | default('未登録')}}<br>
-                {{result.remark| default('未登録')}}<br>
-                {{result.registrant_id| default('未登録')}}<br>
-                {{result.created_at | default('未登録')}}<br>
+                <p>備品ID: {{ result.id | default('未登録') }}</p>
+                <p>備品名: {{ result.name | default('未登録') }}</p>
+                <p>備考: {{ result.remark | default('未登録') }}</p>
+                <p>登録者ID: {{ result.registrant_id | default('未登録') }}</p>
+                <p>登録日時: {{ result.created_at | default('未登録') }}</p>
             </div>
         {% endif %}
     </div>

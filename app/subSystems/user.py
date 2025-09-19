@@ -28,28 +28,6 @@ def close_userdb(e=None):  # e=None は Flask の teardown でコールバック
     if user_db is not None:
         user_db.close()
 
-# #初期化
-# def init_userdb():
-#     db = get_userdb()
-#     cursor = db.cursor()
-
-#     with open("seed_users.sql", encoding="utf-8") as f:
-#         sql_commands = f.read().split(";")
-
-#     for command in sql_commands:
-#         command = command.strip()
-#         if command:
-#             cursor.execute(command)
-
-#     cursor.close()
-#     close_userdb()
-#     print("ユーザDBを初期化しました")
-
-# =======================================================
-# 利用者テーブルの操作
-# users テーブル: id(PK), studentID, password_hash, created_at
-# =======================================================
-
 class User:
     def __init__(self, studentID, authority):
         self.studentID = studentID
@@ -88,37 +66,6 @@ class User:
         cursor.close()
         db.commit()
 
-    # @classmethod
-    # def update_password(cls, uid, new_password):
-    #     """パスワード変更"""
-    #     db = get_userdb()
-    #     cursor = db.cursor()
-    #     password_hash = generate_password_hash(new_password)
-    #     cursor.execute(
-    #         "UPDATE users SET password_hash=%s WHERE id=%s",
-    #         (password_hash, uid)
-    #     )
-    #     cursor.close()
-    #     db.commit()
-
-    # @classmethod
-    # def update_authority(cls, uid, authority):
-    #     """権限変更"""
-    #     db = get_userdb()
-    #     cursor = db.cursor()
-    #     cursor.execute("UPDATE users SET authority=%s WHERE id=%s", (authority, uid))
-    #     cursor.close()
-    #     db.commit()
-
-    # @classmethod
-    # def delete(cls, uid):
-    #     """ユーザ削除"""
-    #     db = get_userdb()
-    #     cursor = db.cursor()
-    #     cursor.execute("DELETE FROM users WHERE id=%s", (uid,))
-    #     cursor.close()
-    #     db.commit()
-
     @classmethod
     def authenticate(cls, studentID, password):
         """学籍番号とパスワードでユーザーを認証"""
@@ -142,16 +89,49 @@ class User:
             # 認証失敗
             return None
 
+    @staticmethod
+    def exists(studentID):
+        db = get_userdb()
+        cursor = db.cursor()
+        cursor.execute("SELECT * FROM users WHERE studentID = %s", (studentID,))
+        result = cursor.fetchone()
+        cursor.close()
+        return result is not None
+
     @classmethod
-    def check(cls, studentID, password):
+    def check(cls, studentID, password, authority):
         """入力チェック"""
         errors = {}
         if not studentID:
             errors["studentID"] = "学籍番号は必須です。"
         elif len(studentID) > 20:
             errors["studentID"] = "学籍番号は20文字以内で入力してください。"
+
         if not password:
             errors["password"] = "パスワードは必須です。"
         elif len(password) < 6:
             errors["password"] = "パスワードは6文字以上で入力してください。"
+
+        if  authority is None:
+            errors["authority"] = "権限の選択は必須です。"
+
         return errors
+    
+    @classmethod
+    def logincheck(cls, session):
+        if not "studentID" in session or not"authority" in session:
+            return -1    #ログイン状態でない
+        
+        authority = session["authority"]
+        return authority
+    
+    @classmethod
+    def getAuthority(cls, studentID):
+        db = get_userdb()
+        cursor = db.cursor()
+        cursor.execute("select authority from users where studentID = %s", (studentID,))
+        userInfo = cursor.fetchone()
+        if userInfo:
+            return userInfo['authority']
+        else:
+            return None

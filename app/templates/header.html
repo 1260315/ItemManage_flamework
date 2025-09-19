@@ -1,0 +1,15 @@
+<header>
+  <div class="header-container">
+    <a href="{{ url_for('home') }}" style=" color: inherit;">
+    <h1>備品管理システム</h1>
+    </a>
+    {% if session.get("studentID") %}
+      <p>ログイン中: {{ session["studentID"] }} 
+        （{% if session["authority"] == 0 %}管理者{% else %}一般ユーザ{% endif %}）
+      </p>
+    {% endif %}
+    <form method="GET" action="/logout" class="logout-form">
+      <button type="submit">ログアウト</button>
+    </form>
+  </div>
+</header>

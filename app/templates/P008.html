@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>備品管理システム - 備品一覧</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+
+
+
+
+<body>
+    {% include 'header.html' %}
+
+    <div class="container-s">
+        <h1>備品一覧</h1>
+    
+
+    <form id="searchForm" method="get" action="/items" 
+      onkeydown="return event.key !== 'Enter';" 
+      onsubmit="return submitSearchForm(event);">
+
+    <div class="search-container">
+        <div class="search-group">
+            <input type="text" id="id" name="id" 
+                   placeholder="備品ID" 
+                   value="{{ request.args.get('id','') }}">
+        </div>
+
+        <div class="search-group">
+            <input type="text" id="name" name="name" 
+                   placeholder="備品名" 
+                   value="{{ request.args.get('name','') }}">
+        </div>
+
+        <div class="search-group">
+            <input type="text" id="created_at" name="created_at" 
+                   placeholder="登録日" 
+                   value="{{ request.args.get('created_at','') }}">
+        </div>
+
+        <div class="search-group">
+            <input type="text" id="registrant_id" name="registrant_id" 
+                   placeholder="登録者" 
+                   value="{{ request.args.get('registrant_id','') }}">
+        </div>
+    </div>
+    <div class="form-group">
+        <fieldset>
+            <legend>カテゴリー:</legend>
+            <div class="categories">
+                {% for category in categories %}
+                    <label>
+                        <input type="checkbox" name="category_id[]" value="{{ category.id }}" {% if  category.id|string in request.args.getlist('category_id[]' ) %}checked{%endif%}>{{ category.name }}
+                    </label>
+                {% endfor %}
+            </div>
+        </fieldset>
+    </div>
+                <div class="form-group">
+                    <button type="submit">検索</button>
+                </div>
+            <br>
+        </form>
+            {% if rows %}
+            <a  id="results"></a>
+            <table class="styled-table">
+            <tr>
+                <th>備品ID <button class="sortBtn" style="width: 1.5em; height: 1.5em; text-align: center;padding: 0;" type="button" data-sort="items.id" >{%if session.sortOrder != "items.id"%} {% elif session.sortDirection%}▼{% else %}▲{% endif %}</button></th>
+                <th>備品名 <button class="sortBtn" style="width: 1.5em; height: 1.5em; text-align: center;padding: 0;" type="button" data-sort="items.name" >{%if session.sortOrder != "items.name" %} {% elif session.sortDirection%}▼{% else %}▲{% endif %}</button></th>
+                <th>登録日 <button class="sortBtn" style="width: 1.5em; height: 1.5em; text-align: center;padding: 0;" type="button" data-sort="items.created_at" >{%if session.sortOrder != "items.created_at" %} {% elif session.sortDirection%}▼{% else %}▲{% endif %}</button></th>
+                <th>登録者 <button class="sortBtn" style="width: 1.5em; height: 1.5em; text-align: center;padding: 0;" type="button" data-sort="items.registrant_id" >{%if session.sortOrder != "items.registrant_id" %} {% elif session.sortDirection%}▼{% else %}▲{% endif %}</button></th>
+                <th>カテゴリ</th>
+                <th>備考</th>
+                <th>編集</th>
+                <th>削除</th>
+            </tr>
+            {% for row in rows %}
+            <tr>
+                {% for key, value in row.items() %}
+                <td>
+                    {{ value }}
+                </td>
+                {% endfor %}
+                <td>
+                    {% if session.studentID|string == row.reg|string or session.authority == 0 %}
+                    <form method="get" action="/edit_item" style="display: inline;">
+                    <button type="submit" name="id" value="{{row.id}}">編集</button>
+                    </form>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if session.studentID|string == row.reg|string or session.authority == 0 %}
+                    <form method="get" action="/delete_item" style="display: inline;">
+                    <button type="submit" name="id" value="{{row.id}}">削除</button>
+                    </form>
+                    {% endif %}
+                </td> 
+            </tr>
+            {% endfor %}
+            </table>
+            {%else%}
+            <p style="text-align: center;">検索に何もヒットしませんでした．</p>
+            {%endif%}
+        </div>
+    <script>
+    // ソートボタン押下時に検索条件を維持して GET
+    function submitSearchForm(event) {
+        event.preventDefault();  // 標準の送信を止める
+
+        const form = document.getElementById("searchForm");
+        const formData = new FormData(form);
+        const params = new URLSearchParams();
+
+        for (const [key, value] of formData.entries()) {
+            if (value.trim() !== "") {
+                params.append(key, value);
+            }
+        }
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const sort = urlParams.get("sort");
+        if (sort) {
+            params.set("sort", sort);  // 上書きでも OK
+        }
+        params.set('do_sort',"0");
+        window.location.href = form.action + "?" + params.toString() + "#results";
+        return false; // 念のため
+    }
+
+    document.querySelectorAll('.sortBtn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const form = document.getElementById("searchForm");
+            const formData = new FormData(form);
+            const params = new URLSearchParams();
+
+            // 空の値を除外してURLパラメータに追加
+            for (const [key, value] of formData.entries()) {
+                if (value.trim() !== "") {
+                    params.append(key, value);
+                }
+            }
+            params.set('sort', btn.dataset.sort);
+            params.set('do_sort',"1");
+            window.location.href = "/items" + "?" + params.toString() + "#results";
+        });
+    });
+    </script>
+</body>
+</html>

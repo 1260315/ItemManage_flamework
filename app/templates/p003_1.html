@@ -7,44 +7,54 @@
 </head>
 <body>
 
-    <!-- ヘッダー -->
-    <header>
-      <div class="header-container">
-        <h1>備品管理システム テスト</h1>
-        <form method="GET" action="/logout" class="logout-form">
-          <button type="submit">ログアウト</button>
-        </form>
-      </div>
-    </header>
+    <!-- ヘッダーをインクルード -->
+    {% include 'header.html' %}
 
     <!-- メインコンテナ -->
     <div class="container">
-        <h1>利用者登録</h1>
+        <h2>利用者登録</h2>
 
-        <form method="post" action="/register_user">
+        <form method="post" action="/add_user" autocomplete="off" novalidate>
+            
+            <!-- 学籍番号 -->
             <div class="form-group">
                 <label for="studentID">学籍番号:</label>
                 <input type="text" id="studentID" name="studentID" required>
+                {% if errors %}
+                    <span class="error">{{ errors.studentID | default('') }}</span>
+                {% endif %}
             </div>
 
+            <!-- パスワード -->
             <div class="form-group">
                 <label for="password">パスワード:</label>
-                <input type="password" id="password" name="password" required>
+                <input type="password" id="password" name="password" autocomplete="new-password" required>
+                {% if errors %}
+                    <span class="error">{{ errors.password | default('') }}</span>
+                {% endif %}
             </div>
 
+            <!-- 権限 -->
             <div class="form-group">
-                <p>・権限を選んでください</p>
-                <label>
-                    <input type="radio" name="authority" value="0" required>
-                    管理者(admin)
-                </label><br>
-                <label>
-                    <input type="radio" name="authority" value="1">
-                    一般ユーザ
-                </label>
+                <fieldset>
+                    <legend>権限を選んでください:</legend>
+                    <label>
+                        <input type="radio" name="authority" value="0" required> 管理者(admin)
+                    </label>
+                    <label>
+                        <input type="radio" name="authority" value="1" required> 一般ユーザ
+                    </label>
+                </fieldset>
+                {% if errors %}
+                    <span class="error">{{ errors.authority | default('') }}</span>
+                {% endif %}
             </div>
 
-            <button type="submit">登録</button>
+            <!-- ボタン -->
+            <div class="button-group">
+                <button type="submit">登録</button>
+                <button type="button" class="cancel-btn" onclick="window.location.href='/home'">キャンセル</button>
+            </div>
         </form>
     </div>
 

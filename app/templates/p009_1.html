@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>備品管理システム_エクスポート</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    <!-- ヘッダー -->
+    <header>
+      <div class="header-container">
+        <h1>備品管理システム テスト</h1>
+        <form method="GET" action="/logout" class="logout-form">
+          <button type="submit">ログアウト</button>
+        </form>
+      </div>
+    </header>
+
+    <!-- メインコンテナ -->
+    <div class="container">
+        <h2>エクスポート</h2>
+        <p>備品一覧をエクスポートしますか？</p>
+
+        <div class="button-group">
+            <form method="post" action="/export_">
+                <button type="submit">エクスポート</button>
+            </form>
+            <form method="get" action="/home">
+                <button type="submit" class="cancel-btn">業務一覧に戻る</button>
+            </form>
+        </div>
+    </div>
+
+</body>
+</html>

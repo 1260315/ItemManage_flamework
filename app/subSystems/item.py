@@ -7,6 +7,13 @@ subSystems/item.py
 import mysql.connector
 from flask import g
 
+#エクスポート用
+import io
+import pandas as pd
+import datetime
+import re
+
+
 def get_itemdb():
     if "item_db" not in g:
         g.item_db = mysql.connector.connect(
@@ -127,7 +134,7 @@ class Item():
         cursor.close()
         db.commit()
 
-        return 
+        return item_id
 
     @classmethod
     def edit(cls, id, name, category_ids, remark):
@@ -181,4 +188,115 @@ class Item():
             errors["remark"] = "備考は100文字以内で入力してください"
         
         return errors
+    
+    @classmethod
+    def get_category_names(cls,item_id):
+        db = get_itemdb()
+        cursor = db.cursor()
+        
+        cursor.execute("""
+        SELECT c.name
+        FROM item_category ic
+        JOIN categories c ON ic.category_id = c.id
+        WHERE ic.item_id = %s
+        """, (item_id,))
 
+        # 結果取得
+        category_names = [row[0] for row in cursor.fetchall()]
+
+        # クローズ
+        cursor.close()
+        db.close()
+
+        # カンマ区切りの文字列で返す
+        return ", ".join(category_names)
+
+    @classmethod
+    def export_csv(cls):
+        items = Item.get_all()
+
+        for i in items : 
+            created_at = i.get('created_at')
+            if isinstance(created_at, datetime.datetime):
+                i['created_at'] = created_at.strftime("%Y-%m-%d %H:%M:%S")
+            elif created_at is None:
+                i['created_at'] = ''
+
+            #category_itemから
+                i['categories'] = Item.get_category_names(i['id'])
+
+        df = pd.DataFrame([{
+            '備品ID': i['id'],
+            '備品名': i['name'],
+            '登録者': i['registrant_id'],
+            '登録日':i['created_at'],
+            '備考': i['remark']
+        }for i in items])
+
+
+        output = io.BytesIO()#空のメモリ上の文字列バッファを作成
+        df.to_csv(output,index=False,encoding='utf-8-sig')
+        output.seek(0)
+
+        return output
+    
+    @classmethod
+    def sort(cls, order, ses):
+        allowed_columns = ['items.id','items.name','items.created_at','items.registrant_id','items.category_id']
+        if order not in allowed_columns:
+            order = 'items.id'
+        elif ses['sortOrder'] == order:
+            ses['sortDirection'] = not ses['sortDirection']
+        else:
+            ses['sortOrder'] = order
+            ses['sortDirection'] = True
+    
+    @classmethod
+    def addOR(cls, value, fieldName):
+        if not value:
+            return [], []
+        conditions = []
+        params = []
+        orParts = []
+        if isinstance(value, str):
+            orParts = re.sub("[\u3000\t]", "", value).split("+")
+            for orPart in orParts:
+                andPart = [t for t in orPart.split() if t]
+                if andPart:
+                    conditions.append("(" + " and ".join([f"{fieldName} like %s" for _ in andPart]) + ")")
+                    params.extend([f"%{x}%" for x in andPart])
+        elif isinstance(value,(list,tuple)):
+            if len(value) > 0:
+                placeholders = ", ".join(["%s"] * len(value))
+                conditions.append(f"exists ( select 1 from item_category where {fieldName} IN ({placeholders}) and items.id = item_category.item_id) ")
+                params.extend(value)
+        condition = " or ".join(conditions)
+        return params, f" ({condition}) "
+    
+    @classmethod
+    def search(cls, values, ses):
+        commands=[]
+        params=[]
+        sql = """select items.id, any_value(items.name) as iname, any_value(items.created_at) as at, any_value(items.registrant_id) as reg,
+            GROUP_CONCAT(categories.name) as category_names, any_value(items.remark)
+            from items left join item_category on items.id = item_category.item_id 
+            left join categories on item_category.category_id = categories.id"""
+        for key, value in values:
+            if key == "category_id":
+                prelist, presql = cls.addOR(value, f"item_category.{key}")
+            else:
+                prelist, presql = cls.addOR(value, f"items.{key}")
+            if prelist:
+                commands.append(presql)
+                params.extend(prelist)
+        if commands:
+            sql += " where " + " and ".join(commands)
+        allowed_columns = ['items.id','items.name','items.created_at','items.registrant_id','items.category_id']
+        order = ses['sortOrder'] if ses['sortOrder'] in allowed_columns  else 'items.id'
+        dir = "asc" if ses['sortDirection'] else "desc"
+        sql += f" group by items.id order by {order} {dir}"
+        db = get_itemdb()
+        cursor=db.cursor(dictionary=True)
+        cursor.execute(sql, params)
+        rows = cursor.fetchall()
+        return rows

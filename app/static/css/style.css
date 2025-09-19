@@ -74,6 +74,7 @@ h3 {
 /* ========== フォーム部品 ========== */
 .form-group {
   margin-bottom: 1.5rem;
+  text-align: center;
 }
 label {
   display: block;
@@ -107,10 +108,12 @@ textarea:focus {
 fieldset {
   border: none;
   padding: 0;
+  
 }
 fieldset legend {
   font-weight: bold;
   margin-bottom: 0.5rem;
+  margin: 0 auto;  
 }
 .categories {
   display: flex;
@@ -154,6 +157,93 @@ button:hover {
   background: #6c757d;
 }
 
+/* ========== 検索フォーム用 ========== */
+.container-s {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  text-align: center;
+}
+.search-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* 2列 */
+  gap: 1rem 1rem; /* 行間1rem, 列間2rem */
+  margin: 1rem auto;
+  max-width: 600px;
+  justify-content: center;
+}
+
+.search-group {
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+
+.search-group input[type="text"] {
+  width: 300px;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  transition: border-color 0.2s;
+}
+
+.search-group input[type="text"]:focus {
+  border-color: #4e54c8;
+  outline: none;
+}
+
+.styled-table {
+    border-collapse: collapse;
+    margin: 20px auto;   /* 中央寄せ */
+    font-size: 14px;
+    font-family: sans-serif;
+    min-width: 800px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.styled-table thead tr {
+    background-color: #009879;
+    color: #ffffff;
+    text-align: center;
+}
+
+.styled-table th, .styled-table td {
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    text-align: center;
+}
+
+.styled-table tbody tr {
+    border-bottom: 1px solid #dddddd;
+}
+
+.styled-table tbody tr:nth-of-type(even) {
+    background-color: #f9f9f9;
+}
+
+.styled-table tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+.styled-table button {
+    font-size: 12px;
+    padding: 3px 8px;
+    border: none;
+    background-color: #009879;
+    color: #fff;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.styled-table button:hover {
+    background-color: #007f66;
+}
 
 /* ボタングループの余白と横並び調整 */
 .button-group {

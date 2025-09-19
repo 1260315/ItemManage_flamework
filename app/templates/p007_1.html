@@ -51,15 +51,8 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <!-- ヘッダー -->
-    <header>
-      <div class="header-container">
-        <h1>備品管理システム テスト</h1>
-        <form method="GET" action="/logout" class="logout-form">
-          <button type="submit">ログアウト</button>
-        </form>
-      </div>
-    </header>
+    <!-- ヘッダーをインクルード -->
+    {% include 'header.html' %}
 
     <div class="container">
         <h2>備品情報の削除確認</h2>
