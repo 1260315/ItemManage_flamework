@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+
+    <title>備品管理システム_利用者再登録</title>
+    
+</head>
+<body>
+    <center>
+    <div class="container">
+        
+         <h2>利用者再登録</h2>
+         <p>削除済みのユーザーです。再登録しますか？</p>
+
+         
+          
+
+       <form method="get" action="/reregister_user">
+        <input type="hidden" name="studentID" value="{{ studentID }}">
+        <input type="hidden" name="password" value="{{ password }}">
+        <input type="hidden" name="authority" value="{{ authority }}">
+        <button type="submit">利用者再登録</button>
+       </form>
+     
+    </div>     
+    </center>
+        
+</body>
+</html>

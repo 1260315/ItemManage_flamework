@@ -117,7 +117,6 @@ def register_user():
         authority = request.form.get('authority')
 
 
-        print(authority)
 
         #入力値チェック
         errors = User.check(studentID, password,authority)
@@ -126,17 +125,45 @@ def register_user():
         
         #既に登録された学籍番号でないかチェック
         if User.exists(studentID):
-            errors=[f"学籍番号 {studentID} は既に登録されています"]
-            return render_template("P003-2_userregistererror.html",errors=errors)
-        
-        
+
+            #再登録
+            add_user = User.get_by_studentID(studentID)
+            deadoralive = add_user["deadoralive"]
+            if deadoralive == 0:
+                #「削除済みのユーザーです。再登録しますか？」
+                return render_template("P003-4_userleregister.html",studentID=studentID,password=password,authority=authority)
+
+            else:
+                errors=[f"学籍番号 {studentID} は既に登録されています"]
+                return render_template("P003-2_userregistererror.html",errors=errors)
+
         #登録
         User.insert(studentID, password, authority)
         return render_template("P003-3_userregistercomplate.html",studentID=studentID)     
 
     else:
         return render_template('P003-1_userregister.html')
-    
+
+#===================================================================
+#利用者再登録
+@app.route('/reregister_user', methods=['GET','POST'])
+def register_user():
+    if request.method == 'POST':
+
+        studentID = request.form['studentID']
+        password = request.form['password']
+        authority = request.form.get('authority')
+
+        User.delele(studentID)
+
+        #登録
+        User.insert(studentID, password, authority)
+        return render_template("P003-3_userregistercomplate.html",studentID=studentID)     
+
+    else:
+        return render_template('P003-1_userregister.html')
+
+   
 #===================================================================
 #ログイン
 @app.route('/login', methods=['GET','POST'])
