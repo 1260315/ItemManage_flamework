@@ -13,7 +13,7 @@
 
 <body>
     
-    <form id="searchForm" method="get" action="/items" onkeydown="return event.key !== 'Enter';">
+    <form id="searchForm" method="get" action="/items" onkeydown="return event.key !== 'Enter';" onsubmit="return submitSearchForm(event);">
         <table style="margin-left: auto; margin-right: auto;">
             <tr>
                 <td><input type="text" name="id" placeholder="備品ID" value="{{ request.args.get('id','') }}"></td>
@@ -56,16 +56,17 @@
             </td>
             {% endfor %}
             <td>
+                {% if session.studentID|string == row.reg|string or session.authority == 0 %}
                 <form method="get" action="/edit_item" style="display: inline;">
                 <button type="submit" name="id" value="{{row.id}}">編集</button>
                 </form>
+                {% endif %}
             </td>
             <td>
                 {% if session.studentID|string == row.reg|string or session.authority == 0 %}
                 <form method="get" action="/delete_item" style="display: inline;">
                 <button type="submit" name="del" value="{{row.id}}">削除</button>
                 </form>
-                {% else %}
                 {% endif %}
             </td>
             
@@ -78,11 +79,43 @@
 </body>
 <script>
 // ソートボタン押下時に検索条件を維持して GET
+function submitSearchForm(event) {
+    event.preventDefault();  // 標準の送信を止める
+
+    const form = document.getElementById("searchForm");
+    const formData = new FormData(form);
+    const params = new URLSearchParams();
+
+    for (const [key, value] of formData.entries()) {
+        if (value.trim() !== "") {
+            params.append(key, value);
+        }
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const sort = urlParams.get("sort");
+    if (sort) {
+        params.set("sort", sort);  // 上書きでも OK
+    }
+    params.set('do_sort',"0");
+    window.location.href = form.action + "?" + params.toString();
+    return false; // 念のため
+}
+
 document.querySelectorAll('.sortBtn').forEach(btn => {
     btn.addEventListener('click', function() {
         const form = document.getElementById("searchForm");
-        const params = new URLSearchParams(new FormData(form));
+        const formData = new FormData(form);
+        const params = new URLSearchParams();
+
+        // 空の値を除外してURLパラメータに追加
+        for (const [key, value] of formData.entries()) {
+            if (value.trim() !== "") {
+                params.append(key, value);
+            }
+        }
         params.set('sort', btn.dataset.sort);
+        params.set('do_sort',"1");
         window.location.href = "/items" + "?" + params.toString();
     });
 });

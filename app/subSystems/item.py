@@ -205,14 +205,11 @@ class Item():
         allowed_columns = ['items.id','items.name','items.created_at','items.registrant_id','items.category_id']
         if order not in allowed_columns:
             order = 'items.id'
-        if not ses['sortOrder'] or not order:
-            ses['sortDirection'] = True
-        if ses['sortOrder'] == order:
+        elif ses['sortOrder'] == order:
             ses['sortDirection'] = not ses['sortDirection']
         else:
             ses['sortOrder'] = order
             ses['sortDirection'] = True
-        return ses['sortOrder'], ses['sortDirection']
     
     @classmethod
     def addOR(cls, value, fieldName):

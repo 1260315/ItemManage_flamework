@@ -220,15 +220,11 @@ def search():
         session['sortOrder'] = "id"
     if 'sortDirection' not in session:
         session['sortDirection'] = True
-    commands = []
-    params = []
-    sql = """select items.id, items.name, items.created_at, items.registrant_id,
-            categories.name as category_id, items.remark 
-            from items join categories on items.category_id = categories.id """
     
     order = request.args.get("sort")
-    if order:       
-        session['sortOrder'], session['sortDirection'] = Item.sort(order,session)
+    do_sort = request.args.get("do_sort","")
+    if order and do_sort == "1":       
+        Item.sort(order,session)
     values = []
     for key, type in FIELDS:
         if type == "str":    
