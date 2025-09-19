@@ -28,6 +28,9 @@ app.teardown_appcontext(close_userdb)
 #テスト用の一覧ページ
 #データベースに登録されているデータを全て一覧表示する画面を生成。
 #編集ボタン・削除ボタンも合わせて生成して、それをクリックすると各業務に遷移する
+@app.before_request
+def make_session_permanent():
+    session.permanent = True
 @app.route('/')
 def test():
     # カテゴリー取得
@@ -103,8 +106,6 @@ def delete_item():
 #
 @app.route('/home', methods=['GET','POST'])
 def home():
-
-    
     if 'studentID' in session and 'authority'in session:
         authority = session['authority']
         print(session['studentID'])
