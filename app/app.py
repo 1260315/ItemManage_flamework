@@ -263,6 +263,9 @@ def edit_item():
                 print("不正なアクセス！登録者IDとセッションIDが一致していません")
                 return redirect("/forbidden")
 
+            if not Item.edit_check(id, name, remark, category_ids):
+                return redirect("/items")
+
             errors = Item.check(name, remark)
             if errors : #入力形式に問題があったとき、エラーメッセージとともに編集画面をもう一度提示する。
                 categories = Category.get_all()

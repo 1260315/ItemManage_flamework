@@ -160,6 +160,31 @@ class Item():
         return cls.refer(id)
 
     @classmethod
+    def edit_check(cls, id, name, remark, category_ids):
+        db = get_itemdb()
+        cursor = db.cursor()
+        
+        edit_item = Item.refer(id)
+
+        before = {
+            "name":   edit_item["name"],
+            "remark": edit_item["remark"],
+            "category_ids": sorted([c['id'] for c in edit_item['categories']])
+        }
+        after = {
+            "name":   name,
+            "remark": remark,
+            "category_ids": sorted(category_ids)
+        }
+
+        for key in ["name", "remark", "category_ids"]:
+            if before[key] != after[key]:
+                return True
+
+        cursor.close()
+        return False
+
+    @classmethod
     def delete(cls, id):
         db = get_itemdb()
         cursor = db.cursor()
