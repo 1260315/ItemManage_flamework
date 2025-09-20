@@ -6,7 +6,7 @@ subSystems/item.py
 """
 import mysql.connector
 from flask import g, session
-
+from pandas.errors import EmptyDataError
 
 #エクスポート用
 import io
@@ -242,13 +242,13 @@ class Item():
         return output
     
     @classmethod
-    def sort(cls, order, ses):
-        allowed_columns = ['items.id','items.name','items.created_at','items.registrant_id','items.category_id']
-        if order not in allowed_columns:
+    def sort(cls, order, ses, do_sort):
+        allowed_columns = ['items.id','items.name','items.created_at','items.registrant_id','items.category_id']#ソートできるもの
+        if order not in allowed_columns:#orderが正規のものか確認
             order = 'items.id'
-        elif ses['sortOrder'] == order:
+        elif ses['sortOrder'] == order and (do_sort == "1" and ses['sortDirection'] or do_sort == "0" and not ses['sortDirection']):#同項目で反転
             ses['sortDirection'] = not ses['sortDirection']
-        else:
+        else:#別項目で降順ソート
             ses['sortOrder'] = order
             ses['sortDirection'] = True
     
@@ -256,22 +256,26 @@ class Item():
     def addOR(cls, value, fieldName):
         if not value:
             return [], []
-        conditions = []
+        
         params = []
-        orParts = []
         if isinstance(value, str):
-            orParts = re.sub("[\u3000\t]", "", value).split("+")
+            conditions = []
+            orParts = []
+            #全角スペース等を半角にする。_, %等sqlのワイルドカードをエスケープ。演算子をいったん退避。
+            orParts = re.sub("[\u3000\t]", " ", value).replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_").replace("\"OR\"", "o%").replace("\" \"", "a%").split("OR")
             for orPart in orParts:
-                andPart = [t for t in orPart.split() if t]
+                #ORで切り分け
+                andPart = [t for t in orPart.replace("o%", "OR").split() if t]#OR演算子を戻す
                 if andPart:
-                    conditions.append("(" + " and ".join([f"{fieldName} like %s" for _ in andPart]) + ")")
-                    params.extend([f"%{re.sub("_", " ", x)}%" for x in andPart])
+                    conditions.append("(" + " and ".join([f"{fieldName} like %s escape '\\\\' " for _ in andPart]) + ")")#and別の集合作成とAND演算子をもどす
+                    params.extend([f"%{x.replace("a%", " ")}%" for x in andPart])#AND演算子を戻す
+            condition = " or ".join(conditions)
         elif isinstance(value,(list,tuple)):
             if len(value) > 0:
+                #カテゴリ検索
                 placeholders = ", ".join(["%s"] * len(value))
-                conditions.append(f"exists ( select 1 from item_category where {fieldName} IN ({placeholders}) and items.id = item_category.item_id) ")
+                condition = f"exists ( select 1 from item_category where {fieldName} IN ({placeholders}) and items.id = item_category.item_id) "
                 params.extend(value)
-        condition = " or ".join(conditions)
         return params, f" ({condition}) "
     
     @classmethod
@@ -295,7 +299,7 @@ class Item():
         allowed_columns = ['items.id','items.name','items.created_at','items.registrant_id','items.category_id']
         order = ses['sortOrder'] if ses['sortOrder'] in allowed_columns  else 'items.id'
         dir = "asc" if ses['sortDirection'] else "desc"
-        sql += f" group by items.id order by {order} {dir}"
+        sql += f" group by items.id order by {order} {dir} "
         db = get_itemdb()
         cursor=db.cursor(dictionary=True)
         cursor.execute(sql, params)

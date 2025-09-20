@@ -51,16 +51,6 @@ header {
   text-align: center;
 }
 
-/* 中央寄せ用 */
-.center-content {
-    text-align: center;
-}
-
-.center-content form {
-    display: inline-block;
-    margin-top: 1rem;
-}
-
 /* ========== 見出し ========== */
 h2 {
   color: #4e54c8;
@@ -157,6 +147,7 @@ button {
   margin: 0.3rem;
 }
 button:hover {
+  transition: transform 0.1s ease, opacity 0.1s ease;
   transform: translateY(-2px);
   opacity: 0.9;
 }
@@ -171,6 +162,11 @@ button:hover {
 }
 
 /* ========== 検索フォーム用 ========== */
+.activate {
+  transform: translateY(1px) !important;
+  opacity: 0.8 !important;
+  transition: transform 0.15s ease, opacity 0.15s ease !important;
+}
 .container-s {
   max-width: 1200px;
   margin: 2rem auto;
