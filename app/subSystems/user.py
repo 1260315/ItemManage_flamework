@@ -140,3 +140,21 @@ class User:
             return userInfo['authority']
         else:
             return None
+
+    @classmethod
+    def deactivate(cls, studentID):
+        """利用者を論理削除 (deadoralive=0)。処理件数を返す"""
+        db = get_userdb()
+        cursor = db.cursor()
+
+        # すでに削除済み (deadoralive=0) は対象外にして更新
+        cursor.execute(
+            "UPDATE users SET deadoralive=0 WHERE studentID=%s AND deadoralive=1",
+            (studentID,)
+        )
+        affected_rows = cursor.rowcount  # 実際に更新された件数
+
+        db.commit()
+        cursor.close()
+
+        return affected_rows

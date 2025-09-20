@@ -2,14 +2,19 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>P004-2 利用者削除入力エラー</title>
+    <title>P004-2 利用者削除エラー</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <h1>P004-2利用者削除エラー</h1>
-    <p>学籍番号「{{ studentID }}」の利用者は存在しません。</p>
+    {% include 'header.html' %}
 
-    <form action="{{ url_for('delete_user') }}" method="GET">
-        <button type="submit">入力画面に戻る</button>
-    </form>
+    <div class="container">
+        <h2>利用者削除エラー</h2>
+        <p>学籍番号「{{ studentID }}」の利用者は存在しません。</p>
+
+        <form action="{{ url_for('delete_user') }}" method="GET">
+            <button type="submit" class="btn-secondary">入力画面に戻る</button>
+        </form>
+    </div>
 </body>
 </html>

@@ -3,40 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <title>P010-3 インポート確認</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <h1>インポート確認</h1>
-    <p>以下のデータをインポートします。よろしいですか？</p>
+    {% include 'header.html' %}
 
-    {% for file in preview_data %}
-        <h2>{{ file.filename }}</h2>
-        <table border="1">
-            <tr>
-                {% for key in file.rows[0].keys() %}
-                    <th>{{ key }}</th>
-                {% endfor %}
-            </tr>
-            {% for row in file.rows %}
-            <tr>
-                {% for value in row.values() %}
-                    <td>{{ value }}</td>
-                {% endfor %}
-            </tr>
-            {% endfor %}
-        </table>
-        <br>
-    {% endfor %}
+    <div class="container">
+        <h2>インポート確認</h2>
+        <p>以下のデータをインポートします。よろしいですか？</p>
 
-    <form action="{{ url_for('import_items') }}" method="POST">
-        <input type="hidden" name="step" value="commit">
-        {% for p in temp_paths %}
-            <input type="hidden" name="temp_paths" value="{{ p }}">
+        {% for file in preview_data %}
+            <h3>{{ file.filename }}</h3>
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        {% for key in file.rows[0].keys() %}
+                            <th>{{ key }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in file.rows %}
+                        <tr>
+                            {% for value in row.values() %}
+                                <td>{{ value }}</td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <br>
         {% endfor %}
-        <button type="submit">インポート実行</button>
-    </form>
 
-    <form action="{{ url_for('import_items') }}" method="GET">
-        <button type="submit">キャンセル</button>
-    </form>
+        <form action="{{ url_for('import_items') }}" method="POST">
+            <input type="hidden" name="step" value="commit">
+            {% for p in temp_paths %}
+                <input type="hidden" name="temp_paths" value="{{ p }}">
+            {% endfor %}
+            <button type="submit" class="btn-primary">インポート実行</button>
+        </form>
+
+        <form action="{{ url_for('import_items') }}" method="GET">
+            <button type="submit" class="btn-secondary">キャンセル</button>
+        </form>
+    </div>
 </body>
 </html>

@@ -390,7 +390,8 @@ def allowed_file(filename):
 def import_items():
     if request.method == 'GET':
         # ファイル入力画面を表示
-        return render_template("p010_1.html")
+        categories = categories = Category.get_all()
+        return render_template("p010_1.html", categories=categories)
 
     # POST時に hidden で渡される "step" の値を確認
     # デフォルトは "upload"

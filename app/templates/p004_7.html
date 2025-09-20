@@ -3,14 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <title>P040-7 エラー</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <h1>P040-7エラー</h1>
-    <p>システムエラーが発生しました。<br></p>
+<header>
+    <div class="header-container">
+        <a href="{{ url_for('home') }}" style="color: inherit; text-decoration: none;">
+            <h1>備品管理システム</h1>
+        </a>
+    </div>
+</header>
 
-    <!-- P010-1 に戻る -->
+<main>
+    <h2>システムエラー</h2>
+    <p>システムエラーが発生しました。<br>管理者にお問い合わせください。</p>
+
     <form action="{{ url_for('delete_user') }}" method="GET">
-        <button type="submit">OK</button>
+        <button type="submit" class="btn">OK</button>
     </form>
+</main>
 </body>
 </html>

@@ -3,17 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <title>P010-2 入力ファイル形式エラー</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <h1>入力ファイル形式エラー</h1>
-    <p>以下のファイルは CSV 形式ではありませんでした。</p>
-    <ul>
-        {% for file in invalid_files %}
-            <li>{{ file }}</li>
-        {% endfor %}
-    </ul>
-    <form action="{{ url_for('import_items') }}" method="GET">
-        <button type="submit">戻る</button>
-    </form>
+    <!-- ヘッダーをインクルード -->
+    {% include 'header.html' %}
+
+    <!-- メインコンテンツ -->
+    <main class="container">
+        <h2>入力ファイル形式エラー</h2>
+        <p>以下のファイルは <strong>CSV 形式</strong> ではありませんでした。</p>
+
+        <ul>
+            {% for file in invalid_files %}
+                <li>{{ file }}</li>
+            {% endfor %}
+        </ul>
+
+        <form action="{{ url_for('import_items') }}" method="GET" style="margin-top: 20px;">
+            <button type="submit" class="btn-secondary">戻る</button>
+        </form>
+    </main>
 </body>
 </html>

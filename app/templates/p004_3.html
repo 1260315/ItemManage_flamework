@@ -3,38 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <title>P004-3 利用者削除確認画面</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <h1>P0004-3利用者削除確認</h1>
+<header>
+    <div class="header-container">
+        <a href="{{ url_for('home') }}" style="color: inherit; text-decoration: none;">
+            <h1>備品管理システム</h1>
+        </a>
+    </div>
+</header>
+
+<main>
+    <h2>利用者削除確認</h2>
     <p>この利用者の削除を実行しますか？</p>
 
-    <table border="1" cellpadding="8">
+    <table class="styled-table">
         <tr>
             <th>学籍番号</th>
             <td>{{ user.studentID }}</td>
         </tr>
         <tr>
             <th>権限</th>
-            <td>
-                {% if user.authority == 0 %}管理者{% else %}一般ユーザー{% endif %}
-            </td>
+            <td>{% if user.authority == 0 %}管理者{% else %}一般ユーザー{% endif %}</td>
         </tr>
     </table>
 
-    <br>
+    <div class="button-group">
+        <!-- 削除処理実行 -->
+        <form action="{{ url_for('delete_user') }}" method="POST" style="display:inline;">
+            <input type="hidden" name="action" value="delete">
+            <input type="hidden" name="studentID" value="{{ user.studentID }}">
+            <button type="submit" class="btn btn-danger">はい</button>
+        </form>
 
-    <!-- 削除処理実行 (action=delete) -->
-    <form action="{{ url_for('delete_user') }}" method="POST" style="display:inline;">
-        <input type="hidden" name="action" value="delete">
-        <input type="hidden" name="studentID" value="{{ user.studentID }}">
-        <button type="submit">はい</button>
-    </form>
-
-    <!-- 削除取り消し (action=cancel) -->
-    <form action="{{ url_for('delete_user') }}" method="POST" style="display:inline;">
-        <input type="hidden" name="action" value="cancel">
-        <input type="hidden" name="studentID" value="{{ user.studentID }}">
-        <button type="submit">いいえ</button>
-    </form>
+        <!-- 削除取り消し -->
+        <form action="{{ url_for('delete_user') }}" method="POST" style="display:inline;">
+            <input type="hidden" name="action" value="cancel">
+            <input type="hidden" name="studentID" value="{{ user.studentID }}">
+            <button type="submit" class="btn">いいえ</button>
+        </form>
+    </div>
+</main>
 </body>
 </html>

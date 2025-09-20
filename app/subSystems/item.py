@@ -5,7 +5,8 @@ subSystems/item.py
 備品情報データベースのテーブルを定義する
 """
 import mysql.connector
-from flask import g
+from flask import g, session
+
 
 #エクスポート用
 import io
@@ -264,7 +265,7 @@ class Item():
                 andPart = [t for t in orPart.split() if t]
                 if andPart:
                     conditions.append("(" + " and ".join([f"{fieldName} like %s" for _ in andPart]) + ")")
-                    params.extend([f"%{x}%" for x in andPart])
+                    params.extend([f"%{re.sub("_", " ", x)}%" for x in andPart])
         elif isinstance(value,(list,tuple)):
             if len(value) > 0:
                 placeholders = ", ".join(["%s"] * len(value))

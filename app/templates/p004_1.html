@@ -2,22 +2,24 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>P004-1 利用者削除情報入力画面</title>
+    <title>P004-1 利用者削除</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <h1>利用者削除</h1>
-    <p>P004-1削除したい利用者の学籍番号を入力してください。</p>
+    {% include 'header.html' %}
 
-    <!-- 確認画面へ遷移する -->
-    <form action="{{ url_for('delete_user') }}" method="POST">
-        <input type="hidden" name="action" value="confirm">
-        <label for="studentID">学籍番号:</label>
-        <input type="text" id="studentID" name="studentID" required>
-        <button type="submit">削除</button>
-    </form>
+    <div class="container">
+        <h2>利用者削除</h2>
+        <p>削除したい利用者の学籍番号を入力してください。</p>
 
+        <form action="{{ url_for('delete_user') }}" method="POST">
+            <input type="hidden" name="action" value="confirm">
+            <label for="studentID">学籍番号:</label>
+            <input type="text" id="studentID" name="studentID" required>
+            <button type="submit" class="btn-danger">削除</button>
+        </form>
 
-    <hr>
-    <p><a href="{{ url_for('home') }}">ホームへ戻る</a></p>
+        <p><a href="{{ url_for('home') }}">ホームへ戻る</a></p>
+    </div>
 </body>
 </html>
