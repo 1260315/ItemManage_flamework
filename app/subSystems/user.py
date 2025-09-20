@@ -164,7 +164,7 @@ class User:
         """ユーザ削除"""
         db = get_userdb()
         cursor = db.cursor()
-        cursor.execute("DELETE FROM users WHERE id=%s", (uid,))
+        cursor.execute("DELETE FROM users WHERE studentID=%s", (uid,))
         cursor.close()
         db.commit()
 

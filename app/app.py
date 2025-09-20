@@ -170,7 +170,7 @@ def login():
         if errors:
             return render_template("p001_1.html", errors=errors,studentID=studentID,password=password)
 
-        if user:
+        if user :
             session['studentID'] = user.studentID
             session['authority'] = user.authority
             
