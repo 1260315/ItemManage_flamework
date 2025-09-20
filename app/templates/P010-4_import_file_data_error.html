@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>P010-4 インポートデータエラー</title>
+</head>
+<body>
+    <h2>インポートエラー</h2>
+    <p>ファイル {{ filename }} のインポートを中止しました。</p>
+    <p>理由: {{ message }}</p>
+
+    <form action="{{ url_for('import_items') }}" method="get">
+        <button type="submit">戻る</button>
+    </form>
+</body>
+</html>
