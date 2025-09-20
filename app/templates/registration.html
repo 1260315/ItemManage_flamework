@@ -18,7 +18,10 @@
             <!-- 備品名 -->
             <div class="form-group">
                 <label for="name">備品名:</label>
-                <input type="text" id="name" name="name" maxlength="50" required>
+                <input type="text" id="name" name="name" maxlength="50">
+                {% if errors.name %}
+                    <span class="error">{{ errors.name }}</span>
+                {% endif %}
             </div>
 
 
@@ -41,6 +44,9 @@
             <div class="form-group">
                 <label for="remark">備考:</label>
                 <textarea id="remark" name="remark" class="remarks-input"></textarea>
+                {% if errors.remark %}
+                    <span class="error">{{ errors.remark }}</span>
+                {% endif %}
             </div>
 
             <!-- ボタングループ -->

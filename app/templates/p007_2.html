@@ -4,40 +4,6 @@
     内容    :   削除した備品情報を表示して、対象の備品を削除が完了したことを知らせる
     出力    :   検索一覧画面(/のGETメソッド)
 -->
-<!-- <!DOCTYPE html>
-<html lang="ja">
-    <head>
-        <meta charset="UTF-8">
-        <title>備品情報削除確定</title>
-    </head>
-    <body text-align: center, margin: 0 auto;>
-        <header>
-            <h1>備品管理システム テスト</h1>
-        </header>
-
-        <center>
-        <h2>備品情報の削除確定</h2>
-        <h3>対象備品情報</h3>
-
-        備品名 : {{item.name}}<br>
-        カテゴリ : 
-            {% if item.categories %}
-                {{ item.categories | map(attribute='name') | join(', ')}}
-            {% else %}
-                未分類
-            {% endif %}<br>
-        登録者 : {{item.registrant_id}}<br>
-        登録日 : {{item.created_at}}<br>
-        備考 : {{item.remark}}<br>
-
-        <h2>削除が無事完了しました！</h2>
-
-        <form method="GET" action="/">
-            <button type="submit" >検索画面に戻る</button>
-        </form>
-        </center>
-    </body> -->
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>

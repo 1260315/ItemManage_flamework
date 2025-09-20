@@ -4,39 +4,6 @@
     内容    :   編集後の備品情報を表示して、編集が完了したことを知らせる
     出力    :   検索一覧画面("/")
 -->
-<!-- <!DOCTYPE html>
-<html lang="ja">
-    <head>
-        <meta charset="UTF-8">
-        <title>備品情報編集確定</title>
-    </head>
-    <body text-align: center, margin: 0 auto;>
-        <header>
-            <h1>備品管理システム テスト</h1>
-        </header>
-        
-        <center>
-        <h2>備品情報編集確定</h2>
-        備品名 : <br>
-        {{ item.name }} <br>
-        
-        カテゴリー : <br>
-            {% if item.categories %}
-                {{ item.categories | map(attribute='name') | join(', ')}}
-            {% else %}
-                未分類
-            {% endif %}<br>
-
-        備考 : <br>
-        {{ item.remark }} <br>
-
-        <form method="GET" action="/">
-            <button type="submit" >検索画面に戻る</button>
-        </form>
-        </center>
-
-    </body> -->
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
