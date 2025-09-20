@@ -338,9 +338,11 @@ def search():
         session['sortDirection'] = True
     
     order = request.args.get("sort")
-    do_sort = request.args.get("do_sort","")
-    if order and do_sort == "1":       
-        Item.sort(order,session)
+    do_sort = request.args.get("do_sort")
+    print(do_sort)
+    print(order)
+    if order and do_sort:       
+        Item.sort(order,session,do_sort)
     values = []
     for key, type in FIELDS:
         if type == "str":    
@@ -350,7 +352,12 @@ def search():
 
     rows = Item.search(values,session)
     categories = Category.get_all()
-    return render_template('p008.html',rows=rows, categories=categories)
+    if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+        # 部分テンプレートだけ返す
+        return render_template('search.html',rows=rows, categories=categories)
+    else:
+        # 通常ページ用テンプレート
+        return render_template('p008.html',rows=rows, categories=categories)
 
 #===================================================================
 #備品情報エクスポート

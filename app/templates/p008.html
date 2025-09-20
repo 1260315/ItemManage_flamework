@@ -18,9 +18,10 @@
     
 
     <form id="searchForm" method="get" action="/items" 
-      onkeydown="return event.key !== 'Enter';" 
-      onsubmit="return submitSearchForm(event);">
-
+      onkeydown="return event.key !== 'Enter';" >
+      <input type="hidden" name="sort" value="{{ request.args.get('sort','') }}">
+      <input type="hidden" name="do_sort" value="{{ request.args.get('do_sort','') }}">
+      <p>OR：OR検索、_（スペース）：AND検索、"OR"、" "：文字列自体を検索</p>
     <div class="search-container">
         <div class="search-group">
             <input type="text" id="id" name="id" 
@@ -59,93 +60,98 @@
         </fieldset>
     </div>
                 <div class="form-group">
-                    <button type="submit">検索</button>
+                    <button type="submit" class="searchBtn">検索</button>
                 </div>
             <br>
         </form>
-            {% if rows %}
-            <a  id="results"></a>
-            <table class="styled-table">
-            <tr>
-                <th>備品ID <button class="sortBtn" style="width: 1.5em; height: 1.5em; text-align: center;padding: 0;" type="button" data-sort="items.id" >{%if session.sortOrder != "items.id"%} {% elif session.sortDirection%}▼{% else %}▲{% endif %}</button></th>
-                <th>備品名 <button class="sortBtn" style="width: 1.5em; height: 1.5em; text-align: center;padding: 0;" type="button" data-sort="items.name" >{%if session.sortOrder != "items.name" %} {% elif session.sortDirection%}▼{% else %}▲{% endif %}</button></th>
-                <th>登録日 <button class="sortBtn" style="width: 1.5em; height: 1.5em; text-align: center;padding: 0;" type="button" data-sort="items.created_at" >{%if session.sortOrder != "items.created_at" %} {% elif session.sortDirection%}▼{% else %}▲{% endif %}</button></th>
-                <th>登録者 <button class="sortBtn" style="width: 1.5em; height: 1.5em; text-align: center;padding: 0;" type="button" data-sort="items.registrant_id" >{%if session.sortOrder != "items.registrant_id" %} {% elif session.sortDirection%}▼{% else %}▲{% endif %}</button></th>
-                <th>カテゴリ</th>
-                <th>備考</th>
-                <th>編集</th>
-                <th>削除</th>
-            </tr>
-            {% for row in rows %}
-            <tr>
-                {% for key, value in row.items() %}
-                <td>
-                    {{ value }}
-                </td>
-                {% endfor %}
-                <td>
-                    {% if session.studentID|string == row.reg|string or session.authority == 0 %}
-                    <form method="get" action="/edit_item" style="display: inline;">
-                    <button type="submit" name="id" value="{{row.id}}">編集</button>
-                    </form>
-                    {% endif %}
-                </td>
-                <td>
-                    {% if session.studentID|string == row.reg|string or session.authority == 0 %}
-                    <form method="get" action="/delete_item" style="display: inline;">
-                    <button type="submit" name="id" value="{{row.id}}">削除</button>
-                    </form>
-                    {% endif %}
-                </td> 
-            </tr>
-            {% endfor %}
-            </table>
-            {%else%}
-            <p style="text-align: center;">検索に何もヒットしませんでした．</p>
-            {%endif%}
-        </div>
+            
+            <div  id="results"></div>
+  
+            </div>
     <script>
-    // ソートボタン押下時に検索条件を維持して GET
-    function submitSearchForm(event) {
-        event.preventDefault();  // 標準の送信を止める
+        
+    document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("searchForm");
+    console.log(form)
+    const resultsDiv = document.getElementById("results");
+    
 
-        const form = document.getElementById("searchForm");
-        const formData = new FormData(form);
-        const params = new URLSearchParams();
-
-        for (const [key, value] of formData.entries()) {
-            if (value.trim() !== "") {
-                params.append(key, value);
-            }
-        }
-
-        const urlParams = new URLSearchParams(window.location.search);
-        const sort = urlParams.get("sort");
-        if (sort) {
-            params.set("sort", sort);  // 上書きでも OK
-        }
-        params.set('do_sort',"0");
-        window.location.href = form.action + "?" + params.toString() + "#results";
-        return false; // 念のため
+    // アニメーション関数
+    function animateButton(btn) {
+        btn.classList.add('hover-effect');
+        setTimeout(() => btn.classList.remove('hover-effect'), 150);
     }
 
-    document.querySelectorAll('.sortBtn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const form = document.getElementById("searchForm");
-            const formData = new FormData(form);
-            const params = new URLSearchParams();
+    // ===== グローバル状態 =====
+    let currentSortKey = 0; 
+    let currentSortDirection = 0; // 0=昇順, 1=降順
 
-            // 空の値を除外してURLパラメータに追加
-            for (const [key, value] of formData.entries()) {
-                if (value.trim() !== "") {
-                    params.append(key, value);
-                }
-            }
-            params.set('sort', btn.dataset.sort);
-            params.set('do_sort',"1");
-            window.location.href = "/items" + "?" + params.toString() + "#results";
-        });
+    const searchBtn = document.querySelector('#searchForm button[type="submit"]');
+
+    form.addEventListener("submit", e => {
+        e.preventDefault();
+        searchBtn.classList.add('activate');
+
+        setTimeout(() => {
+            searchBtn.classList.remove('activate');
+            fetchResults({ 
+                doSort: currentSortDirection, // 現在のソート方向
+                sortKey: currentSortKey 
+            });
+        }, 50); // アニメーション時間に合わせる
     });
-    </script>
+    // ===== ソートボタン =====
+    resultsDiv.addEventListener("click", e => {
+        const btn = e.target.closest(".sortBtn");
+        if (!btn) return;
+
+        animateButton(btn);
+        const clickedKey = btn.dataset.sort;
+
+        if (clickedKey === currentSortKey) {
+            // 同じカラムならトグル
+            currentSortDirection = currentSortDirection === 0 ? 1 : 0;
+        } else {
+            // 違うカラムなら昇順にリセット
+            currentSortKey = clickedKey;
+            currentSortDirection = 0;
+        }
+
+        fetchResults({ doSort: currentSortDirection, sortKey: currentSortKey });
+    });
+
+    // ===== 共通処理 =====
+    function fetchResults({ doSort = null, sortKey = null }) {
+        const formData = new FormData(form);
+
+        if (sortKey) formData.set("sort", sortKey);
+        if (doSort !== null) formData.set("do_sort", doSort.toString());
+
+        // URLSearchParams に詰める
+        const params = new URLSearchParams();
+        for (const [key, value] of formData.entries()) {
+            if (value.trim() !== "") params.append(key, value);
+        }
+
+        // URL 更新
+        const newUrl = `${form.action}?${params.toString()}`;
+        history.replaceState(null, "", newUrl);
+
+        // fetch で結果取得
+        fetch(newUrl, {
+            method: "GET",
+            headers: { "X-Requested-With": "XMLHttpRequest" }
+        })
+        .then(res => res.ok ? res.text() : Promise.reject("通信エラー"))
+        .then(html => resultsDiv.innerHTML = html)
+        .catch(err => console.error(err));
+    }
+
+    // ===== 初回アクセス時に一覧表示 =====
+    fetchResults({ doSort: null });
+});
+</script>
+
+
 </body>
 </html>
