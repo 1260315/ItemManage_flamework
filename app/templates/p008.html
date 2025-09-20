@@ -19,6 +19,8 @@
 
     <form id="searchForm" method="get" action="/items" 
       onkeydown="return event.key !== 'Enter';" >
+      <input type="hidden" name="sort" value="{{ request.args.get('sort','') }}">
+      <input type="hidden" name="do_sort" value="{{ request.args.get('do_sort','') }}">
       <p>OR：OR検索、_（スペース）：AND検索、"OR"、" "：文字列自体を検索</p>
     <div class="search-container">
         <div class="search-group">
@@ -81,7 +83,7 @@
     }
 
     // ===== グローバル状態 =====
-    let currentSortKey = null; 
+    let currentSortKey = 0; 
     let currentSortDirection = 0; // 0=昇順, 1=降順
 
     const searchBtn = document.querySelector('#searchForm button[type="submit"]');
@@ -92,7 +94,10 @@
 
         setTimeout(() => {
             searchBtn.classList.remove('activate');
-            fetchResults({ doSort: false });
+            fetchResults({ 
+                doSort: currentSortDirection, // 現在のソート方向
+                sortKey: currentSortKey 
+            });
         }, 50); // アニメーション時間に合わせる
     });
     // ===== ソートボタン =====

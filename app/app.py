@@ -335,8 +335,10 @@ def search():
         session['sortDirection'] = True
     
     order = request.args.get("sort")
-    do_sort = request.args.get("do_sort","")
-    if order:       
+    do_sort = request.args.get("do_sort")
+    print(do_sort)
+    print(order)
+    if order and do_sort:       
         Item.sort(order,session,do_sort)
     values = []
     for key, type in FIELDS:

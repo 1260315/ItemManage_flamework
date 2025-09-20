@@ -246,8 +246,11 @@ class Item():
         allowed_columns = ['items.id','items.name','items.created_at','items.registrant_id','items.category_id']#ソートできるもの
         if order not in allowed_columns:#orderが正規のものか確認
             order = 'items.id'
-        elif ses['sortOrder'] == order and (do_sort == "1" and ses['sortDirection'] or do_sort == "0" and not ses['sortDirection']):#同項目で反転
-            ses['sortDirection'] = not ses['sortDirection']
+            ses['sortDirection'] = True
+        elif ses['sortOrder'] == order and str(do_sort) == "0":#同項目で反転
+            ses['sortDirection'] = True
+        elif ses['sortOrder'] == order and str(do_sort) == "1":#同項目で反転
+            ses['sortDirection'] = False
         else:#別項目で降順ソート
             ses['sortOrder'] = order
             ses['sortDirection'] = True
