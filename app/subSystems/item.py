@@ -6,7 +6,7 @@ subSystems/item.py
 """
 import mysql.connector
 from flask import g, session
-
+from pandas.errors import EmptyDataError
 
 #エクスポート用
 import io
