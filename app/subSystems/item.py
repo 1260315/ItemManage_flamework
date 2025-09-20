@@ -219,18 +219,20 @@ class Item():
         params = []
         orParts = []
         if isinstance(value, str):
-            orParts = re.sub("[\u3000\t]", "", value).split("+")
+            orParts = re.sub("[\u3000\t]", " ", value).replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_").replace("\"OR\"", "o%").replace("\" \"", "a%").split("OR")
             for orPart in orParts:
-                andPart = [t for t in orPart.split() if t]
+                andPart = [t for t in orPart.replace("o%", "OR").split() if t]
                 if andPart:
-                    conditions.append("(" + " and ".join([f"{fieldName} like %s" for _ in andPart]) + ")")
-                    params.extend([f"%{x}%" for x in andPart])
+                    conditions.append("(" + " and ".join([f"{fieldName} like %s escape '\\\\' " for _ in andPart]) + ")")
+                    params.extend([f"%{x.replace("a%", " ")}%" for x in andPart])
         elif isinstance(value,(list,tuple)):
             if len(value) > 0:
                 placeholders = ", ".join(["%s"] * len(value))
                 conditions.append(f"exists ( select 1 from item_category where {fieldName} IN ({placeholders}) and items.id = item_category.item_id) ")
                 params.extend(value)
         condition = " or ".join(conditions)
+        print(condition)
+        print(params)
         return params, f" ({condition}) "
     
     @classmethod
@@ -254,7 +256,7 @@ class Item():
         allowed_columns = ['items.id','items.name','items.created_at','items.registrant_id','items.category_id']
         order = ses['sortOrder'] if ses['sortOrder'] in allowed_columns  else 'items.id'
         dir = "asc" if ses['sortDirection'] else "desc"
-        sql += f" group by items.id order by {order} {dir}"
+        sql += f" group by items.id order by {order} {dir} "
         db = get_itemdb()
         cursor=db.cursor(dictionary=True)
         cursor.execute(sql, params)
