@@ -48,19 +48,47 @@ def register_user():
     else:
         studentID = request.form['studentID']
         password = request.form['password']
-        #authority = request.form.get('authority', 1)  #権限は絶対入力
         authority = request.form.get('authority')
 
         #入力値チェック
         errors = User.check(studentID, password, authority)
         if errors:
-            return render_template("P003_1.html", errors=errors)
+            return render_template("p003_1.html", errors=errors)
         
         #既に登録された学籍番号でないかチェック
         if User.exists(studentID):
-            errors=[f"学籍番号 {studentID} は既に登録されています"]
-            return render_template("P003-2_userregistererror.html",errors=errors)
+
+            #再登録
+            add_user = User.get_by_studentID(studentID)
+            deadoralive = add_user["deadoralive"]
+            if deadoralive == 0:
+                #「削除済みのユーザーです。再登録しますか？」
+                return render_template("p003_4.html",studentID=studentID,password=password,authority=authority)
+
+            else:
+
+                errors=[f"学籍番号 {studentID} は既に登録されています"]
+                return render_template("p003_2.html",errors=errors)
         
+        #登録
+        User.insert(studentID, password, authority)
+        return render_template("p003_3.html",studentID=studentID)     
+    
+#===================================================================
+#利用者再登録
+@app.route('/re_add_user', methods=['GET','POST'])
+def re_add_user():
+    
+    if request.method == "GET":
+        return render_template("p003_1.html")
+    
+    elif request.method == "POST":
+        studentID = request.form['studentID']
+        password = request.form['password']
+        authority = request.form.get('authority')
+
+        User.delele(studentID)
+
         #登録
         User.insert(studentID, password, authority)
         return render_template("P003_3.html",studentID=studentID)     
@@ -284,6 +312,8 @@ def search():
     rows = Item.search(values,session)
     categories = Category.get_all()
     return render_template('p008.html',rows=rows, categories=categories)
+
+
 ### ===== アプリ実行 ===== ###
 if __name__ == "__main__":
 
