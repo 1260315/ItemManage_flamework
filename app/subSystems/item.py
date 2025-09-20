@@ -12,7 +12,7 @@ import io
 import pandas as pd
 import datetime
 import re
-
+import csv
 
 def get_itemdb():
     if "item_db" not in g:
@@ -300,3 +300,114 @@ class Item():
         cursor.execute(sql, params)
         rows = cursor.fetchall()
         return rows
+
+
+    @classmethod
+    def clear_all(cls):
+        """備品データを全削除し、AUTO_INCREMENTをリセット"""
+        db = get_itemdb()
+        cursor = db.cursor()
+
+        # 備品データを全削除
+        cursor.execute("DELETE FROM item_category")
+        cursor.execute("DELETE FROM items")
+
+        # AUTO_INCREMENT(自動で連番を振る仕組み)をリセットし１から始める
+        cursor.execute("ALTER TABLE item_category AUTO_INCREMENT = 1")
+        cursor.execute("ALTER TABLE items AUTO_INCREMENT = 1")
+
+        db.commit()
+        cursor.close()
+
+
+    @classmethod
+    def import_from_file(cls, filepath):
+        if not filepath.endswith(".csv"):
+            return False, "CSVファイルではありません"
+
+        # 列数の一貫性チェック（csv.reader でクォートも正しく解釈）
+        with open(filepath, "r", encoding="utf-8") as f:
+            reader = csv.reader(f)
+            lines = list(reader)
+
+        if not lines:
+            return False, "CSVファイルが空です"
+
+        expected_cols = len(lines[0])  # ヘッダーの列数
+        for row in lines[1:]:
+            if len(row) != expected_cols:
+                return False, "CSVに余分なカンマがあります"
+
+        # pandasで読み込み
+        try:
+            df = pd.read_csv(filepath, encoding="utf-8")
+        except EmptyDataError:
+            return False, "CSVファイルが空です"
+
+        if df.empty:
+            return False, "CSVファイルにデータがありません"
+
+        # カラムチェック（順序も含めて一致必須）
+        required_cols = ["name", "remark", "category_ids"]
+        if list(df.columns) != required_cols:
+            return False, f"CSVのカラムが不正です。必須カラムは {required_cols} です。実際: {list(df.columns)}"
+
+        db = get_itemdb()
+        cursor = db.cursor()
+        imported_items = []
+
+        try:
+            registrant_id = session.get("studentID")
+
+            for _, row in df.iterrows():
+                name = None if pd.isna(row['name']) else str(row['name']).strip()
+                remark = None if pd.isna(row['remark']) else str(row['remark']).strip()
+                category_raw = None if pd.isna(row['category_ids']) else str(row['category_ids']).strip()
+
+                # 必須チェック
+                if not name:
+                    return False, "備品名(name) が空です"
+                if not category_raw:
+                    return False, "カテゴリ(category_ids) が空です"
+
+                # 整数・範囲チェック
+                try:
+                    category_ids = [int(cid) for cid in category_raw.split(',')]
+                except ValueError:
+                    return False, f"カテゴリIDが整数ではありません: {category_raw}"
+
+                for cid in category_ids:
+                    if cid < 1 or cid > 6:
+                        return False, f"カテゴリID {cid} が範囲外です (1〜6 のみ有効)"
+
+                # items 登録
+                cursor.execute(
+                    "INSERT INTO items (name, registrant_id, remark) VALUES (%s, %s, %s)",
+                    (name, registrant_id, remark)
+                )
+                item_id = cursor.lastrowid
+
+                # categories 登録
+                for cid in category_ids:
+                    cursor.execute(
+                        "INSERT INTO item_category (item_id, category_id) VALUES (%s, %s)",
+                        (item_id, cid)
+                    )
+
+                imported_items.append({
+                    "id": item_id,
+                    "name": name,
+                    "remark": remark,
+                    "registrant_id": registrant_id,
+                    "created_at": pd.Timestamp.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    "categories": category_ids
+                })
+
+            db.commit()
+            cursor.close()
+            return True, imported_items
+
+        except Exception as e:
+            db.rollback()
+            cursor.close()
+            return False, str(e)

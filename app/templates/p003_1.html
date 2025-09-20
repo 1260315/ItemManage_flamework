@@ -19,7 +19,7 @@
             <!-- 学籍番号 -->
             <div class="form-group">
                 <label for="studentID">学籍番号:</label>
-                <input type="text" id="studentID" name="studentID" required>
+                <input type="text" id="studentID" name="studentID" value="{{ studentID or '' }}">
                 {% if errors %}
                     <span class="error">{{ errors.studentID | default('') }}</span>
                 {% endif %}
@@ -28,7 +28,7 @@
             <!-- パスワード -->
             <div class="form-group">
                 <label for="password">パスワード:</label>
-                <input type="password" id="password" name="password" autocomplete="new-password" required>
+                <input type="password" id="password" name="password" autocomplete="new-password" value="{{ password or '' }}">
                 {% if errors %}
                     <span class="error">{{ errors.password | default('') }}</span>
                 {% endif %}
@@ -39,10 +39,10 @@
                 <fieldset>
                     <legend>権限を選んでください:</legend>
                     <label>
-                        <input type="radio" name="authority" value="0" required> 管理者(admin)
+                        <input type="radio" name="authority" value="0" > 管理者(admin)
                     </label>
                     <label>
-                        <input type="radio" name="authority" value="1" required> 一般ユーザ
+                        <input type="radio" name="authority" value="1" > 一般ユーザ
                     </label>
                 </fieldset>
                 {% if errors %}

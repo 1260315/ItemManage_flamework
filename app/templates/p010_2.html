@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>P010-2 入力ファイル形式エラー</title>
+</head>
+<body>
+    <h1>入力ファイル形式エラー</h1>
+    <p>以下のファイルは CSV 形式ではありませんでした。</p>
+    <ul>
+        {% for file in invalid_files %}
+            <li>{{ file }}</li>
+        {% endfor %}
+    </ul>
+    <form action="{{ url_for('import_items') }}" method="GET">
+        <button type="submit">戻る</button>
+    </form>
+</body>
+</html>

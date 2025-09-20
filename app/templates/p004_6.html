@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>P004-6 利用者削除入力エラー</title>
+</head>
+<body>
+    <h1>P004-6利用者削除エラー</h1>
+    <p>学籍番号「{{ studentID }}」は削除済みです。</p>
+
+    <form action="{{ url_for('delete_user') }}" method="GET">
+        <button type="submit">入力画面に戻る</button>
+    </form>
+</body>
+</html>
