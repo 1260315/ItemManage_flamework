@@ -5,6 +5,7 @@ subSystems/user.py
 利用者情報データベースのテーブルを定義する
 """
 import mysql.connector
+import re
 from flask import g
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -160,11 +161,13 @@ class User:
             errors["studentID"] = "学籍番号は必須です。"
         elif len(studentID) > 20:
             errors["studentID"] = "学籍番号は20文字以内で入力してください。"
+        # 半角数字だけかチェック（数字以外が含まれていたらエラー）
+        elif not re.fullmatch(r"[0-9]+", studentID):
+            errors["studentID"] = "学籍番号は半角数字のみで入力してください。"
         if not password:
             errors["password"] = "パスワードは必須です。"
         elif len(password) < 6:
             errors["password"] = "パスワードは6文字以上で入力してください。"
         if  authority is None:
-            print("ああああああああああああ")
             errors["authority"] = "権限の選択は必須です。"
         return errors

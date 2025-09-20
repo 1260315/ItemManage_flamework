@@ -147,7 +147,7 @@ def register_user():
 #===================================================================
 #利用者再登録
 @app.route('/reregister_user', methods=['GET','POST'])
-def register_user():
+def reregister_user():
     if request.method == 'POST':
 
         studentID = request.form['studentID']
@@ -178,12 +178,8 @@ def login():
 
         if user:
             session['studentID'] = user.studentID
-            session['authority'] = user.authority
-            
-           
-               
+            session['authority'] = user.authority    
             return redirect("/home")
-           
         else:
             return render_template("P001-4_roginerror.html", error="学籍番号またはパスワードが違います")
 
@@ -191,12 +187,6 @@ def login():
 # エクスポート（CSV）
 @app.route('/export_items', methods=['GET','POST'])
 def export_items():
-   
-    """
-    #ログインしているかの判定
-    if 'user_id' not in session:
-        return redirect(url_for('login'))
-    """
     
     return render_template("P009-1_export.html", error=None)
 
@@ -210,17 +200,14 @@ def export_check():
      
 
     for i in items:
-            created_at = i.get('created_at')
-            if isinstance(created_at, datetime.datetime):
-                i['created_at'] = created_at.strftime("%Y-%m-%d %H:%M:%S")
-            elif created_at is None:
-                i['created_at'] = ''
+        created_at = i.get('created_at')
+        if isinstance(created_at, datetime.datetime):
+            i['created_at'] = created_at.strftime("%Y-%m-%d %H:%M:%S")
+        elif created_at is None:
+            i['created_at'] = ''
 
-#category_itemから
-    i['categories'] = Item.get_category_names(i['id'])
-
-     
-           
+        #category_itemから
+        i['categories'] = Item.get_category_names(i['id'])
 
     # 3. DataFrame に変換
     df = pd.DataFrame([{
@@ -236,26 +223,14 @@ def export_check():
     output = io.BytesIO()#空のメモリ上の文字列バッファを作成
     df.to_csv(output,index=False,encoding='utf-8-sig')
     output.seek(0)
+
     return send_file(
         output,
         mimetype='text/csv',
         as_attachment=True,
         download_name='items.csv'
-     )  
-
-     return render_template("P009-2_exportcomplate.html")     
-#===================================================================
-#===================================================================
-# ログアウト
-@app.route('/logout')
-def logout():
-    session.clear()
-   
-    
+    )  
 
 ### ===== アプリ実行 ===== ###
 if __name__ == "__main__":
-    # with app.app_context():
-    #     init_itemdb() 
-
     app.run(debug=True, host="0.0.0.0", port=5000)
