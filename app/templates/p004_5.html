@@ -2,25 +2,17 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>P004-5 利用者削除完了画面</title>
+    <title>P004-5 利用者削除完了</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-<header>
-    <div class="header-container">
-        <a href="{{ url_for('home') }}" style="color: inherit; text-decoration: none;">
-            <h1>備品管理システム</h1>
-        </a>
-    </div>
-</header>
+    {% include 'header.html' %}
 
-<main>
-    <h2>利用者削除完了</h2>
-    <p>利用者「{{ username }}」の削除が完了しました。</p>
+    <div class="container">
+        <h2>利用者削除完了</h2>
+        <p>利用者「{{ username }}」の削除が完了しました。</p>
 
-    <div class="button-group">
-        <a href="{{ url_for('home') }}" class="btn">ホームへ戻る</a>
+        <a href="{{ url_for('home') }}" class="btn-primary">ホームへ戻る</a>
     </div>
-</main>
 </body>
 </html>

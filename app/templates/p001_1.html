@@ -16,7 +16,7 @@
         <form method="post" action="/login" autocomplete="off">
             <div class="form-group">
                 <label for="studentID">学籍番号:</label>
-                <input type="text" id="studentID" name="studentID" value="{{ studentID or '' }}" >
+                <input type="text" id="studentID" name="studentID" value="{{ studentID if errors else ''}}" autocomplete="off">
                 {% if errors %}
                     <span class="error">{{ errors.studentID | default('') }}</span>
                 {% endif %}
@@ -24,7 +24,7 @@
 
             <div class="form-group">
                 <label for="password">パスワード:</label>
-                <input type="password" id="password" name="password" value="{{ password or '' }}">
+                <input type="password" id="password" name="password" value="{{ password if errors else '' }}" autocomplete="new-password">
                 {% if errors %}
                     <span class="error">{{ errors.password | default('') }}</span>
                 {% endif %}

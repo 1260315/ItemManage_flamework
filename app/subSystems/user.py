@@ -158,3 +158,14 @@ class User:
         cursor.close()
 
         return affected_rows
+    
+    @classmethod
+    def delete(cls, uid):
+        """ユーザ削除"""
+        db = get_userdb()
+        cursor = db.cursor()
+        cursor.execute("DELETE FROM users WHERE id=%s", (uid,))
+        cursor.close()
+        db.commit()
+
+        return

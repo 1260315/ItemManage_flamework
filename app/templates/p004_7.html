@@ -2,25 +2,19 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>P040-7 エラー</title>
+    <title>P040-7 システムエラー</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-<header>
-    <div class="header-container">
-        <a href="{{ url_for('home') }}" style="color: inherit; text-decoration: none;">
-            <h1>備品管理システム</h1>
-        </a>
+    {% include 'header.html' %}
+
+    <div class="container">
+        <h2>システムエラー</h2>
+        <p>システムエラーが発生しました。管理者にお問い合わせください。</p>
+
+        <form action="{{ url_for('delete_user') }}" method="GET">
+            <button type="submit" class="btn-primary">OK</button>
+        </form>
     </div>
-</header>
-
-<main>
-    <h2>システムエラー</h2>
-    <p>システムエラーが発生しました。<br>管理者にお問い合わせください。</p>
-
-    <form action="{{ url_for('delete_user') }}" method="GET">
-        <button type="submit" class="btn">OK</button>
-    </form>
-</main>
 </body>
 </html>

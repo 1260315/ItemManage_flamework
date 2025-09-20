@@ -3,38 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <title>P004-4 利用者削除確認エラー</title>
-</head>
-<body>
-    <h1>P0004-4利用者削除エラー</h1>
-    <p>学籍番号「{{ studentID }}」削除に失敗しました。</p>
-
-    <form action="{{ url_for('delete_user') }}" method="GET">
-        <button type="submit">入力画面に戻る</button>
-    </form>
-</body>
-</html><!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <title>P004-4 利用者削除確認エラー</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-<header>
-    <div class="header-container">
-        <a href="{{ url_for('home') }}" style="color: inherit; text-decoration: none;">
-            <h1>備品管理システム</h1>
-        </a>
+    {% include 'header.html' %}
+
+    <div class="container">
+        <h2>利用者削除エラー</h2>
+        <p>学籍番号「{{ studentID }}」の削除に失敗しました。</p>
+
+        <form action="{{ url_for('delete_user') }}" method="GET">
+            <button type="submit" class="btn-secondary">入力画面に戻る</button>
+        </form>
     </div>
-</header>
-
-<main>
-    <h2>利用者削除エラー</h2>
-    <p>学籍番号「{{ studentID }}」の削除に失敗しました。</p>
-
-    <form action="{{ url_for('delete_user') }}" method="GET">
-        <button type="submit" class="btn">入力画面に戻る</button>
-    </form>
-</main>
 </body>
 </html>

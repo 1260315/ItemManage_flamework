@@ -91,7 +91,7 @@ def re_add_user():
         password = request.form['password']
         authority = request.form.get('authority')
 
-        User.delele(studentID)
+        User.delete(studentID)
 
         #登録
         User.insert(studentID, password, authority)
@@ -159,7 +159,7 @@ def login():
     #     return redirect("/forbidden")
     
     if request.method == 'GET':
-        return render_template("p001_1.html", error=None)
+        return render_template("p001_1.html", error=None,studentID="", password="")
     else:
         studentID = request.form['studentID']
         password = request.form['password']
@@ -481,7 +481,7 @@ def import_items():
             else:
                 failed_files.append({"filename": filename, "reason": result})
 
-            # os.remove(filepath)  # 読み込み後に削除
+            os.remove(filepath)  # 読み込み後に削除
 
 
         # 成功・失敗どちらも表示
