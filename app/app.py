@@ -18,32 +18,8 @@ app.teardown_appcontext(close_userdb)
 
 ###以下、エンドポイントへのルーティング
 #===================================================================
-#テスト用の一覧ページ
-#データベースに登録されているデータを全て一覧表示する画面を生成。
-#編集ボタン・削除ボタンも合わせて生成して、それをクリックすると各業務に遷移する
-@app.route('/')
-def test():
-    authority = User.logincheck(session)
-
-    if authority == -1:
-        return redirect("/login")
-    else:
-        print("authority:")
-        print(session["authority"])
-        # カテゴリー取得
-        categories = Category.get_all()
-
-        # 備品情報クエリ取得
-        items = Item.get_all()
-
-        from werkzeug.security import generate_password_hash
-        print(generate_password_hash("password123"))
-
-        return render_template("test.html", items = items, categories = categories)
-
-#===================================================================
 #業務一覧画面
-@app.route('/home', methods=['GET','POST'])
+@app.route('/', methods=['GET','POST'])
 def home():
 
     if request.method == 'GET':
@@ -111,7 +87,7 @@ def login():
             
         
             
-            return redirect("/home")
+            return redirect("/")
         
         else:
             return render_template("p001_4.html", error="学籍番号またはパスワードが違います")
@@ -138,7 +114,7 @@ def add_item():
     
         if request.method == 'GET':
             categories = Category.get_all()
-            return render_template("registration.html", categories=categories)
+            return render_template("registration.html", errors=[], categories=categories)
         
         elif request.method == 'POST':
             categories = Category.get_all()
@@ -149,13 +125,13 @@ def add_item():
             errors = Item.check(name, remark)
             if errors :
                 categories = Category.get_all()
-                return render_template("registration.html", categories=categories, error=errors)
+                return render_template("registration.html", categories=categories, errors=errors)
 
             category_ids = request.form.getlist("category_ids")
             category_ids = [int(cid) for cid in category_ids]
             item_id = Item.insert(name, registrant_id, remark, category_ids)
             result_item = Item.refer(item_id)
-            return render_template('registration.html', categories=categories, result = result_item)
+            return render_template('registration.html', categories=categories, errors = [], result = result_item)
 
 #===================================================================
 # 備品編集
