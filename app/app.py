@@ -22,6 +22,14 @@ app.teardown_appcontext(close_userdb)
 
 ###以下、エンドポイントへのルーティング
 #===================================================================
+@app.errorhandler(Exception)
+def handle_exception(e):
+    # ログ出力など
+    app.logger.error(f"エラー発生: {e}")
+
+    # 独自エラーページを表示
+    return render_template("error.html", error=str(e)), 500
+
 #業務一覧画面
 @app.route('/', methods=['GET','POST'])
 def home():

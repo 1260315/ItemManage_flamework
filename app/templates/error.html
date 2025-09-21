@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>エラーが発生しました</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <h1>備品管理システム</h1>
+        </div>
+    </header>
+
+    <div class="container error-page">
+        <h2>⚠ エラーが発生しました</h2>
+        <p class="error-message">
+            申し訳ありません。処理中に問題が発生しました。<br>
+            下記の内容をご確認ください。
+        </p>
+
+        {% if error %}
+        <div class="error-detail">
+            <h3>詳細</h3>
+            <p>{{ error }}</p>
+        </div>
+        {% endif %}
+
+        <div class="button-group">
+            <a href="{{ url_for('home') }}">
+                <button>ホームへ戻る</button>
+            </a>
+            <button class="btn-secondary" onclick="location.reload()">再読み込み</button>
+        </div>
+    </div>
+</body>
+</html>
