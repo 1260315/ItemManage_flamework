@@ -18,7 +18,7 @@
                 <label for="studentID">学籍番号:</label>
                 <input type="text" id="studentID" name="studentID" value="{{ studentID if errors else ''}}" autocomplete="off">
                 {% if errors %}
-                    <span class="error">{{ errors.studentID | default('') }}</span>
+                    <span class="error">{{ errors.studentID }}</span>
                 {% endif %}
             </div>
 
@@ -26,7 +26,7 @@
                 <label for="password">パスワード:</label>
                 <input type="password" id="password" name="password" value="{{ password if errors else '' }}" autocomplete="new-password">
                 {% if errors %}
-                    <span class="error">{{ errors.password | default('') }}</span>
+                    <span class="error">{{ errors.password }}</span>
                 {% endif %}
             </div>
 

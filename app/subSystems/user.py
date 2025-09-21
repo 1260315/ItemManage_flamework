@@ -82,16 +82,25 @@ class User:
         print(row)
         cursor.close()
 
-        if row["deadoralive"]==0:
+        # if row and check_password_hash(row["password_hash"], password):
+        #     # 認証成功
+
+        #     return cls(studentID=row["studentID"], authority=row["authority"])
+        # elif row["deadoralive"]==0:
+        #     # 削除済みのユーザー
+        #     return None
+
+        #     return None
+
+        if row is None:
             return None
 
-        if row and check_password_hash(row["password_hash"], password):
-            # 認証成功
+        elif row["deadoralive"]==0:
+            return None
 
+        elif check_password_hash(row["password_hash"], password):
             return cls(studentID=row["studentID"], authority=row["authority"])
-        else:
-            # 認証失敗
-            return None
+
 
     @staticmethod
     def exists(studentID):
