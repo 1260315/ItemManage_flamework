@@ -69,7 +69,12 @@
   
             </div>
     <script>
-        
+    window.addEventListener('pageshow', function(event) {
+        if (event.persisted) {
+            // bfcache から復元された場合
+            window.location.reload(); // サーバーに再リクエスト
+        }
+    }); 
     document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("searchForm");
     console.log(form)
