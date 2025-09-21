@@ -82,6 +82,9 @@ class User:
         print(row)
         cursor.close()
 
+        if row["deadoralive"]==0:
+            return None
+
         if row and check_password_hash(row["password_hash"], password):
             # 認証成功
 
