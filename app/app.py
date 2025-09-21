@@ -340,17 +340,15 @@ def search():
           ("created_at","str"),
           ("registrant_id","str"),
           ("category_id","list")]
+
+    
+    order = request.args.get("sort")
+    sortDir = request.args.get("sortDir")
     if 'sortOrder' not in session:
         session['sortOrder'] = "id"
     if 'sortDirection' not in session:
-        session['sortDirection'] = True
-    
-    order = request.args.get("sort")
-    do_sort = request.args.get("do_sort")
-    print(do_sort)
-    print(order)
-    if order and do_sort:       
-        Item.sort(order,session,do_sort)
+        session['sortDirection'] = False
+    Item.sort(order,session,sortDir)
     values = []
     for key, type in FIELDS:
         if type == "str":    

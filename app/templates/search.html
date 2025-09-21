@@ -14,7 +14,9 @@
             <tr>
                 {% for key, value in row.items() %}
                 <td>
-                    {{ value }}
+                    <div class="text-clamp">
+                        {{ value }}
+                    </div>
                 </td>
                 {% endfor %}
                 <td>

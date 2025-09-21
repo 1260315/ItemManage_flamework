@@ -20,7 +20,7 @@
     <form id="searchForm" method="get" action="/items" 
       onkeydown="return event.key !== 'Enter';" >
       <input type="hidden" name="sort" value="{{ request.args.get('sort','') }}">
-      <input type="hidden" name="do_sort" value="{{ request.args.get('do_sort','') }}">
+      <input type="hidden" name="sortDir" value="{{ request.args.get('sortDir','') }}">
       <p>OR：OR検索、_（スペース）：AND検索、"OR"、" "：文字列自体を検索</p>
     <div class="search-container">
         <div class="search-group">
@@ -125,7 +125,7 @@
         const formData = new FormData(form);
 
         if (sortKey) formData.set("sort", sortKey);
-        if (doSort !== null) formData.set("do_sort", doSort.toString());
+        if (doSort !== null) formData.set("sortDir", doSort.toString());
 
         // URLSearchParams に詰める
         const params = new URLSearchParams();

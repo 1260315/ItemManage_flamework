@@ -267,14 +267,14 @@ class Item():
         return output
     
     @classmethod
-    def sort(cls, order, ses, do_sort):
+    def sort(cls, order, ses, sortDir):
         allowed_columns = ['items.id','items.name','items.created_at','items.registrant_id','items.category_id']#ソートできるもの
-        if order not in allowed_columns:#orderが正規のものか確認
-            order = 'items.id'
+        if not order or not sortDir or order not in allowed_columns or sortDir not in ["0", "1"]:#orderが正規のものか確認
+            ses['sortOrder'] = 'items.id'
             ses['sortDirection'] = True
-        elif ses['sortOrder'] == order and str(do_sort) == "0":#同項目で反転
+        elif ses['sortOrder'] == order and sortDir == "0":#同項目で反転
             ses['sortDirection'] = True
-        elif ses['sortOrder'] == order and str(do_sort) == "1":#同項目で反転
+        elif ses['sortOrder'] == order and sortDir == "1":#同項目で反転
             ses['sortDirection'] = False
         else:#別項目で降順ソート
             ses['sortOrder'] = order

@@ -233,6 +233,14 @@ button:hover {
 .styled-table tbody tr:hover {
     background-color: #f1f1f1;
 }
+.text-clamp {
+  max-width: 200px;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;       /* 最大3行 */
+  -webkit-box-orient: vertical;
+  white-space: normal;         /* 複数行を許可 */
+}
 .styled-table button {
     font-size: 12px;
     padding: 3px 8px;
